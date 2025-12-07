@@ -1,2 +1,14 @@
 node_modules/
 np-content/uploads/
+.env
+*.sqlite
+
+# Ignore logs
+*.log
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor settings (optional, if using)
+.vscode/
