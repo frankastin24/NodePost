@@ -17,6 +17,6 @@ const User = global.npdb.define('np_users', {
 module.exports = User;
 
 (async ()=> {
-    await global.npdb.sync({force:true});
+    await global.npdb.sync();
 })()
     

@@ -3,53 +3,178 @@ const view = require('../fuse/view');
 const updateEnvVariable = require('../fuse/enviromentals');
 const crypto = require('crypto')
 const createPost = require('../np-includes/createPost');
+const getPost = require('../np-includes/getPost');
+const updatePost = require('../np-includes/updatePost');
 const Post = require('../models/Post')
 const { addAjax } = require('../np-includes/addAjax');
 const adminMenu = require('../np-includes/adminMenu');
 const loginUser = require('../np-includes/loginUser');
 const addNoPrivAjax = require('../np-includes/addNoPrivAjax');
 const fs = require('fs')
+const { Op } = require('sequelize');
+const CustomPostType = require('../models/CustomPostType');
 class NPAdmin {
 
+    static noPrivAjax(request, context) {
+        console.log(context.req.body)
+        if (global.__noPrivAjax && global.__noPrivAjax[request.action]) {
 
-    static noPrivAjax(request,context) {
-      
-        if(global.__noPrivAjax && global.__noPrivAjax[request.action]) {
-            global.__noPrivAjax[request.action](context,request);
+            global.__noPrivAjax[request.action](context, request);
+
         } else {
+
             context.res.send('Action not found!');
+
         }
-    } 
+    }
 
-    
+    static registerAJAX() {
+        addAjax('get_post', async (context, request) => {
+            const post = await getPost(request.id);
+
+            context.res.send(JSON.stringify(post));
+        })
+
+        addAjax('save_post', async (context, request) => {
+            const post = JSON.parse(request.post);
+
+            await updatePost(post);
+
+            context.res.send('success');
+        })
+
+        addAjax('get_dir_contents', async (context, request) => {
+            const fs = require('fs');
+
+            const path = global.__app_path + request.filePath;
+
+            const entries = fs.readdirSync(path, { withFileTypes: true });
+
+            const folders = [];
+            const files = [];
+
+            entries.forEach(entry => {
+
+                if (entry.isDirectory()) {
+                    folders.push(entry.name);
+                } else if (entry.isFile()) {
+                    files.push(entry.name);
+                }
+
+            });
+
+            context.res.send(JSON.stringify({ files, folders }));
+        })
+
+        addAjax('upload_file', (context, request) => {
+            const req = context.req;
+            const res = context.res;
+           
+
+            const Busboy = require('busboy');
+            const fs = require('fs');
+            const path = require('path');
+
+            const busboy = Busboy({ headers: req.headers });
+            let filename = '';
+            let folderPath = '';
+            let saveTo = '';
+            let fileSaved = false;
+
+            busboy.on('field', (fieldname, val) => {
+                if (fieldname === 'filename') filename = val;
+                if (fieldname === 'path') folderPath = val;
+            });
+
+            busboy.on('file', (fieldname, file, fileInfo) => {
+                // If client sent filename as POST variable, use that; otherwise use fileInfo.filename
+
+                filename = filename.replaceAll(' ', '-');
+
+                let actualFilename = filename || fileInfo.filename || `img_${Date.now()}.jpg`;
 
 
-    static login(request,context) {
-         if(global.__env.INSTALL_COMPLETE = 'false') {
-           return context.res.redirect(`/${global.__env.ADMIN_URL}/install`);
-        }
-        if(request.username) {
-            const loginStatus = loginUser(context,request.username,request.password);
-            if(loginStatus.error) {
-                return view(admin_views_path + 'login', {message: loginStatus.message},context)
+
+                const uploadDir = global.__app_path + folderPath;
+
+                if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+                saveTo = path.join(uploadDir, actualFilename);
+
+                const writeStream = fs.createWriteStream(saveTo);
+                file.pipe(writeStream);
+                file.on('end', () => { fileSaved = true; });
+            });
+
+            busboy.on('finish', () => {
+                if (fileSaved) {
+                    res.send(JSON.stringify({
+                        success: true,
+                        filePath: folderPath + (filename || ''),
+
+                    }));
+                } else {
+                    res.status(500).send(JSON.stringify({
+                        success: false,
+                        message: 'File not written'
+                    }));
+                }
+            });
+
+            req.pipe(busboy);
+        })
+
+        addAjax('change_file_name', (context,request) => {
+            const fs = require('fs');
+            const oldPath = global.__app_path + request.oldPath;
+            const newPath = global.__app_path + request.newPath;
+
+            try {
+                fs.renameSync(oldPath, newPath);
+                context.res.send(`Renamed '${oldPath}' to '${newPath}'`);
+            } catch (err) {
+                context.res.send(`Error renaming '${oldPath}' to '${newPath}':` + err.message);
             }
+        })
+
+        addAjax('get_cpts' ,  async (context) => {
+            
+            const cpts = await CustomPostType.findAll();
+
+            context.res.send(JSON.stringify(cpts))
+
+        })
+    }
+
+    static async login(request, context) {
+        if (global.__env.INSTALL_COMPLETE == 'false') {
+            return context.res.redirect(`/${global.__env.ADMIN_URL}/install`);
+        }
+        if (request.username) {
+
+            const loginStatus = await loginUser(context, request.username, request.password);
+
+            if (loginStatus.error) {
+                return view(admin_views_path + 'login', { message: loginStatus.message }, context)
+            }
+            context.res.redirect('/np-admin')
         } else {
-            return view(admin_views_path + 'login', {message: ''},context)
+            return view(admin_views_path + 'login', { message: '' }, context)
         }
 
     }
 
     static async index(request, context) {
-        
-        if(global.__env.INSTALL_COMPLETE = 'false') {
-           return context.res.redirect(`/${global.__env.ADMIN_URL}/install`);
+
+        if (global.__env.INSTALL_COMPLETE == 'false') {
+            return context.res.redirect(`/${global.__env.ADMIN_URL}/install`);
         }
 
         if (!context.req.session.userID || typeof context.req.session.userID == 'undefined') {
-            
             return context.res.redirect(`/login`);
-
         }
+
+        NPAdmin.registerAJAX()
 
         if (context.req.path.includes('np-ajax')) {
 
@@ -86,65 +211,31 @@ class NPAdmin {
 
         if (request.param1 == 'cpt') {
 
-            if (request.param2 == 'add') {
-                return view(admin_views_path + '/cpt-new', {}, context);
-            }
-
-            if (request.param2 == 'view-all') {
-
-                offset = 1;
-
-                if (typeof request.param3 !== 'undefined') {
-                    offset = parseInt(request.param3);
-                }
-
-                numPages = global.__cpts.length / 10;
-                displayCPTs = [];
-
-                global.__cpts.forEach((cpt, index) => {
-                    if (index >= (offset - 1) && index <= (offset + 10)) {
-                        displayCPTs.push({
-                            id: cpt.id,
-                            title: cpt.title,
-                            slug: cpt.slug,
-                            use_rest: cpt.use_rest,
-                            top_level: cpt.top_level,
-                            basic_editor: cpt.basic_editor,
-                            page_builder: cpt.page_builder,
-                        })
-                    }
-                });
-
-                const data = {
-                    cpts: displayCPTs,
-                    pages: numPages,
-                    currentPage: offset,
-                }
-
-                return view(admin_views_path + '/cpt-list', data, context);
-            }
-
+            
+            return view(admin_views_path + '/cpt', {}, context);
+            
         }
 
 
 
         if (request.param1 == 'edit') {
 
-            const currentPost = get_post(request.param2);
+            const currentPost = getPost(request.param2);
 
             global.post = currentPost;
-            console.log('here')
 
-            return view(admin_views_path + 'edit', {}, context);
-
-
+            return view(admin_views_path + 'edit', { post: currentPost }, context);
         }
 
         if (request.param1 == 'view-all') {
 
             const posts = await Post.findAll({
-                post_type: request.param2
+                post_type: request.param2,
+                post_staus : {
+                    [Op.ne] : 'new'
+                }
             })
+            
 
             return view(admin_views_path + 'post-list', { posts }, context);
 
@@ -164,23 +255,7 @@ class NPAdmin {
     }
 
 
-    static startWithIgnition(request, context) {
-       update_option('active_theme', 'igition');
-        update_option('has_theme_activated', false);
 
-        updateEnvVariable('INSTALL_COMPLETE', 'true');
-
-        context.res.send('{"success" : true}');
-    }
-
-
-
-    static startWithPageBuilder(request, context) {
-        update_option('active_theme', 'pagebuilder');
-        update_option('has_theme_activated', false);
-        updateEnvVariable('INSTALL_COMPLETE', 'true');
-        context.res.send('{"success" : true}');
-    }
 
     static async addCPT(request, context) {
         const CustomPostType = require('../models/CustomPostType');
@@ -259,84 +334,11 @@ class NPAdmin {
 
     static uploadFile(request, context) {
 
-        const req = context.req;
-        const res = context.res;
 
-
-        const Busboy = require('busboy');
-        const fs = require('fs');
-        const path = require('path');
-
-        const busboy = Busboy({ headers: req.headers });
-        let filename = '';
-        let folderPath = '';
-        let saveTo = '';
-        let fileSaved = false;
-
-        busboy.on('field', (fieldname, val) => {
-            if (fieldname === 'filename') filename = val;
-            if (fieldname === 'path') folderPath = val;
-        });
-
-        busboy.on('file', (fieldname, file, fileInfo) => {
-            // If client sent filename as POST variable, use that; otherwise use fileInfo.filename
-
-            filename = filename.replaceAll(' ', '-');
-
-            let actualFilename = filename || fileInfo.filename || `img_${Date.now()}.jpg`;
-
-
-
-            const uploadDir = global.__app_path + folderPath;
-
-            if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-            saveTo = path.join(uploadDir, actualFilename);
-
-            const writeStream = fs.createWriteStream(saveTo);
-            file.pipe(writeStream);
-            file.on('end', () => { fileSaved = true; });
-        });
-
-        busboy.on('finish', () => {
-            if (fileSaved) {
-                res.send(JSON.stringify({
-                    success: true,
-                    filePath: folderPath + (filename || ''),
-
-                }));
-            } else {
-                res.status(500).send(JSON.stringify({
-                    success: false,
-                    message: 'File not written'
-                }));
-            }
-        });
-
-        req.pipe(busboy);
     }
 
     static getDirContents(request, context) {
-        const fs = require('fs');
 
-        const path = global.__app_path + request.filePath;
-
-        const entries = fs.readdirSync(path, { withFileTypes: true });
-
-        const folders = [];
-        const files = [];
-
-        entries.forEach(entry => {
-
-            if (entry.isDirectory()) {
-                folders.push(entry.name);
-            } else if (entry.isFile()) {
-                files.push(entry.name);
-            }
-
-        });
-
-        context.res.send(JSON.stringify({ files, folders }));
 
     }
 
@@ -359,16 +361,7 @@ class NPAdmin {
     }
 
     static renameFileFolder(request, context) {
-        const fs = require('fs');
-        const oldPath = global.__app_path + request.oldPath;
-        const newPath = global.__app_path + request.newPath;
-
-        try {
-            fs.renameSync(oldPath, newPath);
-            context.res.send(`Renamed '${oldPath}' to '${newPath}'`);
-        } catch (err) {
-            context.res.send(`Error renaming '${oldPath}' to '${newPath}':` + err.message);
-        }
+       
     }
 
 

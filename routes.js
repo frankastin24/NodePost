@@ -15,7 +15,7 @@ router.get(`/${adminURL}/install`, NPInstall.index)
 
 router.post(`/${adminURL}/np-ajax`, NPAdmin.index );
 
-router.post(`/np-ajax/`, NPAdmin.noPrivAjax );
+router.post(`/np-ajax`, NPAdmin.noPrivAjax );
 router.get(`/np-ajax`, NPAdmin.noPrivAjax );
 
 router.get(`/${adminURL}`, NPAdmin.index)

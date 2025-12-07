@@ -43,7 +43,7 @@ const uploadFile = async (event,currentFolder,uploadsFilePath,updateFolderConten
 
   formData.append('file', file)
 
-  await fetch('/api/np-admin/upload-file', {
+  await fetch('/np-admin/np-ajax/?action=upload_file', {
     method: 'POST',
     body: formData
   })

@@ -1,6 +1,6 @@
 
 .editor-aside {
-    width: calc(16% + 20px);
+    width: 300px;
     top: 0;
     position: fixed;
     right: 0px;
@@ -51,15 +51,42 @@
                 line-height: 20px;
                 color:var(--dark);
             }
-           
+
+            .slug {
+                padding:5px 8px;
+                border:1px solid var(--medium);
+                color:var(--medium);
+                width:100%;
+            }
             
-            button {
+            .date {
+                input,p {
+                    padding:5px 6px;
+                }
+                .year {
+                    max-width:50px;
+                }
+                .hour {
+                    margin-left:20px;
+                }
+                .date-small {
+                    max-width:35px;
+                }
+            }
+            
+            button, a  {
                 display:block;
-               width: calc(100% - 120px);
+               width:100%;
                margin-bottom:20px;
+               padding:10px 20px;
+               text-align: center;
+               font-size: 16px;
                &:first-child {
                 
                }
+            }
+            a {
+                width:calc(100% - 40px);
             }
 
             p {

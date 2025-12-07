@@ -1,5 +1,5 @@
 #dash-sidebar {
-      width: 11%;
+    width: 200px;
     height: 100vh;
     position: fixed;
     background: var(--dark);
@@ -20,10 +20,20 @@
         padding-bottom: 0px;
 
         cursor: pointer;
+        &:first-child {
+            img {
+                width:25px !important;
+                margin-left:-3px;
+            }
+        }
 
         .title {
             gap: 20px;
             align-items: center;
+            a,h4 {
+                color:#FFF;
+                font-weight: bold;
+            }
         }
 
         .sub-menu {

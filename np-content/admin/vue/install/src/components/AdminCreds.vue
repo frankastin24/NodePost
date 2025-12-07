@@ -1,24 +1,24 @@
 <template>
 
-    <section v-if="step == 5" class="np-install-section" id="np-mysql-details">
-            
-            <h1>{{langObj["Site Credentials"]}}</h1>
-            
-            <input v-model="username" :placeholder="langObj['Username']" type="text"/>
-            <input v-model="password" :placeholder="langObj['Password']" type="password"/>
+    <section class="np-install-section" id="np-mysql-details">
 
-             <div class="flex nav">
-               <button class='btn btn-primary' @click="previous">{{langObj['Previous']}}</button>
-               <button class='btn btn-primary next' @click="next">{{langObj['Next']}}</button>
-            </div>
-            
+        <h1>{{ store.langObj["Site Credentials"] }}</h1>
 
-        </section>
+        <input v-model="username" :placeholder="store.langObj['Username']" type="text" />
+        <input v-model="password" :placeholder="store.langObj['Password']" type="password" />
+
+        <div class="flex nav">
+            <button class='btn btn-primary' @click="previous">{{ store.langObj['Previous'] }}</button>
+            <button class='btn btn-primary next' @click="next">{{ store.langObj['Next'] }}</button>
+        </div>
+
+
+    </section>
 
 
 </template>
 <script setup>
-import {ref,onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAppStore } from '../store/store';
 const store = useAppStore();
 
@@ -26,42 +26,67 @@ const userMessage = ref('');
 
 const username = ref('');
 const password = ref('');
+onMounted(async () => {
+    const userCreated = await checkIfUserCreated();
+    if(userCreated) {
+        store.step = 6;
+    }
+
+})
+const checkIfUserCreated = async () => {
+
+    const response = await fetch('/np-ajax/?action=check_admin_created');
+
+    const userCreated = await response.text();
+
+    return (userCreated == 'true');
+
+}
 
 const checkUserCreds = () => {
-    if(username.value == '') {
-       userMessage.value = 'Please enter a Username';
-       return false;
+    if (username.value == '') {
+        userMessage.value = 'Please enter a Username';
+        return false;
     }
-    if(password.value == '') {
+    if (password.value == '') {
         userMessage.value = 'Please enter a Password';
-       return false;
+        return false;
     }
 
     return true;
 }
 const createUser = async () => {
 
-    const params = new URLSearchParams()
-  
-    params.append('username', username.value)
-    params.append('password', password.value)
+    const formData = new FormData()
 
-    await fetch('/np-ajax/?action=create_admin' , {
-        method : 'post',
-        body : params.toString()
+    formData.append('username', username.value)
+    formData.append('password', password.value)
+
+    await fetch('/np-ajax/?action=create_admin', {
+        method: 'post',
+        body: formData
     })
 
 }
 
-const next = () => {
-    if(checkUserCreds()) {
-        createUser();
-        store.step = 5;
+const next = async () => {
+
+    const userCreated = await checkIfUserCreated();
+
+    if (userCreated) {
+        store.step = 6;
+    } else {
+        if (checkUserCreds()) {
+            createUser();
+            store.step = 6;
+        }
     }
+
 }
-const prev = () => {
-    
-    store.step = 3;
-    
+const previous = () => {
+
+    store.step = 4;
+
 }
+
 </script>

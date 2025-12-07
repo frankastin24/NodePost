@@ -9,15 +9,19 @@
       
       <li class="menu-item">
         <div class="title flex">
-
+      
         <% if(menuItem.dashIcon) { %>
             <img width="18" src="/np-content/admin/img/<%= menuItem.dashIcon %>.svg"/>
         <% } %>
+        <% if(menuItem.pageURL) { %>
+         <a href="<%= menuItem.pageURL %>"><%= menuItem.pageName %></a>
 
+        <% } else { %>
         <h4><%= menuItem.pageName %></h4>
+        <% } %>
         
         </div>
-
+<% if(menuItem.subMenu) { %>
         <ul class="sub-menu">
 
               <% for (subMenuItem of menuItem.subMenu) { %>
@@ -29,6 +33,7 @@
              <% } %>
         
             </ul>
+              <% } %>
       </li>
 
       <% } %>

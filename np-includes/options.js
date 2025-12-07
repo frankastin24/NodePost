@@ -1,13 +1,8 @@
 const Option = require('../models/Option')
-const NPError = require('./npError')
+
 
 const update_option = async (name,value) => {
-    if(typeof name == 'undefined') {
-        return NPError(__dirname+'options.js:6', 'Option name undefined');
-    }
-    if(typeof value == 'undefined') {
-        return NPError(__dirname+'options.js:6', 'Option value undefined');
-    }
+   
     
    const foundOptions = await Option.findAll({
         where: {

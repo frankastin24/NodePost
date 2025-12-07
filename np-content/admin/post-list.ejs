@@ -24,7 +24,7 @@
                     <tr data-id="<%= post.id %>">
                         <td><%= post.title %></td>
                         <td><%= post.slug %></td>
-                        <td><a href="/np-admin/edit/post_id=<%= post.id %>">Edit</a></td>
+                        <td><a href="/np-admin/edit/<%= post.id %>">Edit</a></td>
                         <td><button class="delete-cpt btn btn-red">Delete</button></td>
                     </tr>
                 <% } %>

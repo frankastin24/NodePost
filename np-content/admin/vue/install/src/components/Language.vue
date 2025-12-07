@@ -23,7 +23,7 @@
 
 
         <div class="flex nav">
-            <button class='btn btn-primary next' @click="next">{{ store.langObj['Next'] }}</button>
+            <button class='btn btn-primary next' @click="next(setCurrentStep)">{{ store.langObj['Next'] }}</button>
         </div>
 
     </section>
@@ -33,7 +33,7 @@
 import { useAppStore } from '../store/store';
 const store = useAppStore();
 import {ref,onMounted} from 'vue';
-
+defineProps(['setCurrentStep'])
 let languageTickerIndex = 0;
 
 const languagesForTicker = [
@@ -75,6 +75,7 @@ const changeLang = async (e) => {
 
 const next = () => {
     store.step = 2;
+    setCurrentStep(2);
 }
 
 onMounted(() => {

@@ -21,7 +21,7 @@ const selectFeaturedImage = () => {
     
     store.imageMode = 'featured';
 
-    store.showImageBrowser = true;
+    store.displayFileBrowser = true;
 
 }
 

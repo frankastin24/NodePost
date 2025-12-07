@@ -1,0 +1,30 @@
+.list-cpt {
+    table {
+        margin-top:20px;
+        border-collapse: collapse;
+        padding:0px;
+
+        th {
+            text-align: left;
+            padding:10px;
+             height:40px;
+             border-top:2px solid var(--darkest);
+        }
+        td {
+            border-top:2px solid var(--dark);
+            padding:10px;
+            height:40px;
+            background:var(--lightest);
+            color:#FFF;
+            
+        }
+        .cpt-buttons {
+            justify-content: flex-end;
+            gap:10px;
+                margin-top: -1px;
+            button {
+                padding:8px 16px;
+            }
+        }
+    }
+}

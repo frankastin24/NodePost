@@ -1,3 +1,19 @@
+/* 
+
+NodePost V0.5
+
+NodePost is a Web Creation framework, 
+featuring a CMS, page builder, 
+2D & 3D design tools
+
+Copyright 2025 Fuseolution 
+http://fuseolution.com
+
+Author: Frank Astin 
+https://frankastin.com
+
+*/
+
 const scanAndRequire = require('./fuse/scanAndRequire');
 const add_action = require('./np-includes/addAction');
 const do_action = require('./np-includes/doAction');

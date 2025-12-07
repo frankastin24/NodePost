@@ -2,14 +2,21 @@ const add_action = require('./addAction')
 
 module.exports =  () => {
 
-        add_action('admin_menu', async () => {
+        add_action('admin_menu', async (context) => {
             
             global.admin_menu = [];
+
+            global.admin_menu.push({
+                pageName : 'Museo AI',
+                dashIcon : 'museo-white',
+                pageURL : '/np-admin/museo'
+            })
             
             global.__cpts.forEach((CPT) => {
                 global.admin_menu.push({
                     pageName : CPT.title,
                     dashIcon : 'posts',
+                    slug : CPT.slug,
                     subMenu : [
                         {
                             pageName: 'View All',

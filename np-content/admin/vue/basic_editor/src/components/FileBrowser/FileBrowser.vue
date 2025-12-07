@@ -65,34 +65,38 @@ const upperCaseFileMode = () => {
 // --- Utility and Action Methods ---
 
 const updateFolderContents = async () => {
-  const params = new URLSearchParams()
-  params.append('filePath', uploadsFilePath.value + store.currentFolder)
-  console.log(uploadsFilePath.value + store.currentFolder)
-  const response = await fetch('/api/np-admin/get-directory-contents/', {
+  const formData = new FormData()
+  formData.append('filePath', uploadsFilePath.value + store.currentFolder)
+ 
+  const response = await fetch('/np-admin/np-ajax/?action=get_dir_contents', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString()
+    body: formData
   })
+
   const directoryContents = await response.json()
+  
   folders.value = directoryContents.folders.map((name) => ({
     name, editName: false, newName: name, path: uploadsFilePath.value + store.currentFolder + name
   }))
+
   files.value = directoryContents.files.map((name) => ({
     name, editName: false, selected: false, newName: name, path: uploadsFilePath.value + store.currentFolder + name
   }))
+  
 }
 
 
 
 const changeFileFolderName = async (file) => {
-  const params = new URLSearchParams()
-  params.append('oldPath', uploadsFilePath.value + store.currentFolder + '/' + file.name)
-  params.append('newPath', uploadsFilePath.value + store.currentFolder + '/' + file.newName)
+  
+  const formData = new FormData()
 
-  await fetch('/api/np-admin/rename-file-or-folder', {
+  formData.append('oldPath', uploadsFilePath.value + store.currentFolder + '/' + file.name)
+  formData.append('newPath', uploadsFilePath.value + store.currentFolder + '/' + file.newName)
+
+  await fetch('/np-admin/np-ajax/?action=change_file_name', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString()
+    body: formData
   })
 
   file.name = file.newName

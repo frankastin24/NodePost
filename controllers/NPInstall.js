@@ -89,7 +89,7 @@ class NPInstall {
             if(global.__env.INSTALL_COMPLETE == 'true') {
                 return context.send('Install Complete');
             }
-        
+            
             update_option('site_title', request.site_title);
             update_option('site_tag_line', request.site_tag_line);
         
@@ -97,19 +97,38 @@ class NPInstall {
         
         })
 
+         addNoPrivAjax('get_site_details', async (context,request) => {
+        
+            if(global.__env.INSTALL_COMPLETE == 'true') {
+                return context.send('Install Complete');
+            }
+            const returnObj = {};
+
+            returnObj.site_title = await get_option('site_title');
+            returnObj.site_tag_line = await get_option('site_tag_line');
+            
+            context.res.send(JSON.stringify(returnObj));
+        
+        })
+
+        
+
         /* Admin User */
 
         addNoPrivAjax('check_admin_created', async (context,request) => {
             
+            const User = require('../models/User');
 
-            const user = {
-                username : request.username,
-                password : request.password
+            const Users = await User.findAll();
+            console.log(Users.length);
+
+            if(Users.length > 0) {
+                context.res.send('true');
+            } else {
+                context.res.send('false');
             }
 
-            const newUser = await createAdmin(user);
-
-            context.session.userID = newUser.id;
+            
 
         })
 
@@ -123,7 +142,31 @@ class NPInstall {
 
             const newUser = await createAdmin(user);
 
-            context.session.userID = newUser.id;
+            context.req.session.userID = newUser.id;
+
+        })
+
+        /* Ignite */
+
+        addNoPrivAjax('start_with_blank', async (context) => {
+
+            await update_option('active_theme', 'blank');
+            
+            updateEnviromental('INSTALL_COMPLETE',true);
+            
+            context.res.send('success');
+            
+
+        })
+
+        addNoPrivAjax('start_with_ignition', async (context) => {
+
+            await update_option('active_theme', 'ignition');
+            
+            updateEnviromental('INSTALL_COMPLETE',true);
+            
+            context.res.send('success');
+            
 
         })
 

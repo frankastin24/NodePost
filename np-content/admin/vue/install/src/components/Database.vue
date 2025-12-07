@@ -15,8 +15,8 @@
         </div>
 
         <div class="flex nav">
-            <button class='btn btn-primary' @click="previous">{{ store.langObj['Previous'] }}</button>
-            <button class='btn btn-primary next' @click="next">{{ store.langObj['Next'] }}</button>
+            <button class='btn btn-primary' @click="previous(setCurrentStep)">{{ store.langObj['Previous'] }}</button>
+            <button class='btn btn-primary next' @click="next(setCurrentStep)">{{ store.langObj['Next'] }}</button>
         </div>
     </section>
 </template>
@@ -24,6 +24,7 @@
 import { useAppStore } from '../store/store';
 const store = useAppStore();
 import {ref,onMounted} from 'vue';
+defineProps(['setCurrentStep'])
 
 const getDB = async () => {
     const response = await fetch('/np-ajax/?action=get_db');
@@ -35,14 +36,17 @@ const setDB = (db) => {
     store.database = db;
     fetch('/np-ajax/?action=set_db&db='+db);
 }
-const previous = () => {
+const previous = (setCurrentStep) => {
     store.step = 1;
+    setCurrentStep(1)
 }
-const next = () => {
+const next = (setCurrentStep) => {
     if(store.database == 'sqlite') {
         store.step = 4;
+        setCurrentStep(4)
     } else {
         store.step = 3;
+       setCurrentStep(3);
     }
 }
 onMounted(() => {

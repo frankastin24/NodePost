@@ -241,14 +241,18 @@ input {
   border: 2px solid #FFF;
 }
 .np-install-section .nav {
-  margin-top: 20px;
+  margin-top: 40px;
 }
 .np-install-section .next {
   margin-left: auto;
 }
+.np-install-section .ignite-buttons {
+  margin-top: 40px;
+  gap: 40px;
+}
 
 #dash-sidebar {
-  width: 11%;
+  width: 200px;
   height: 100vh;
   position: fixed;
   background: var(--dark);
@@ -268,9 +272,17 @@ input {
   padding-bottom: 0px;
   cursor: pointer;
 }
+#dash-sidebar .menu-item:first-child img {
+  width: 25px !important;
+  margin-left: -3px;
+}
 #dash-sidebar .menu-item .title {
   gap: 20px;
   align-items: center;
+}
+#dash-sidebar .menu-item .title a, #dash-sidebar .menu-item .title h4 {
+  color: #FFF;
+  font-weight: bold;
 }
 #dash-sidebar .menu-item .sub-menu {
   display: none;
@@ -285,6 +297,33 @@ input {
 }
 #dash-sidebar .menu-item.open .sub-menu {
   display: block;
+}
+
+.list-cpt table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  padding: 0px;
+}
+.list-cpt table th {
+  text-align: left;
+  padding: 10px;
+  height: 40px;
+  border-top: 2px solid var(--darkest);
+}
+.list-cpt table td {
+  border-top: 2px solid var(--dark);
+  padding: 10px;
+  height: 40px;
+  background: var(--lightest);
+  color: #FFF;
+}
+.list-cpt table .cpt-buttons {
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: -1px;
+}
+.list-cpt table .cpt-buttons button {
+  padding: 8px 16px;
 }
 
 .dash-main {
@@ -303,7 +342,7 @@ input {
 .edit-post-title {
   font-size: 30px;
   font-weight: bold;
-  width: calc(81% - 20px) !important;
+  width: calc(100% - 308px) !important;
   border: 1px solid #000;
   padding: 10px;
   margin: 10px 0px;
@@ -312,7 +351,7 @@ input {
 .featured-image {
   height: 140px;
   border: 1px solid #000;
-  width: calc(81% - 20px) !important;
+  width: calc(100% - 308px) !important;
   margin-bottom: 10px;
   background-position: center;
   background-size: cover;
@@ -409,7 +448,7 @@ input {
 }
 
 .editor-aside {
-  width: calc(16% + 20px);
+  width: 300px;
   top: 0;
   position: fixed;
   right: 0px;
@@ -450,10 +489,34 @@ input {
   line-height: 20px;
   color: var(--dark);
 }
-.editor-aside .tabs .tab button {
+.editor-aside .tabs .tab .slug {
+  padding: 5px 8px;
+  border: 1px solid var(--medium);
+  color: var(--medium);
+  width: 100%;
+}
+.editor-aside .tabs .tab .date input, .editor-aside .tabs .tab .date p {
+  padding: 5px 6px;
+}
+.editor-aside .tabs .tab .date .year {
+  max-width: 50px;
+}
+.editor-aside .tabs .tab .date .hour {
+  margin-left: 20px;
+}
+.editor-aside .tabs .tab .date .date-small {
+  max-width: 35px;
+}
+.editor-aside .tabs .tab button, .editor-aside .tabs .tab a {
   display: block;
-  width: calc(100% - 120px);
+  width: 100%;
   margin-bottom: 20px;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 16px;
+}
+.editor-aside .tabs .tab a {
+  width: calc(100% - 40px);
 }
 .editor-aside .tabs .tab p {
   margin-bottom: 10px;
@@ -708,7 +771,7 @@ input {
 }
 
 .stage {
-  width: calc(78.5% - 20px) !important;
+  width: calc(100% - 350px);
   min-height: 400px;
   padding: 20px;
   border: 1px solid #000;
@@ -791,6 +854,7 @@ input {
   position: fixed;
   bottom: 0px;
   width: 22%;
+  z-index: 999;
 }
 .elements-panel .close-elements-panel {
   background-image: url("/np-content/admin/img/slide-down.svg");

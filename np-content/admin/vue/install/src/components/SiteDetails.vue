@@ -1,14 +1,14 @@
 <template>
-    <section v-if="step == 4" class="np-install-section" id="np-mysql-details">
+    <section  class="np-install-section" id="np-mysql-details">
 
         <h1>Site Details</h1>
 
-        <input v-model="siteName" :placeholder="langObj['Site Name']" type="text" />
-        <input v-model="siteTagline" :placeholder="langObj['Site Tag Line']" type="text" />
+        <input v-model="siteTitle" :placeholder="store.langObj['Site Name']" type="text" />
+        <input v-model="siteTagLine" :placeholder="store.langObj['Site Tag Line']" type="text" />
 
         <div class="flex nav">
-            <button class='btn btn-primary' @click="previous">{{ langObj['Previous'] }}</button>
-            <button class='btn btn-primary next' @click="next">{{ langObj['Next'] }}</button>
+            <button class='btn btn-primary' @click="previous(setCurrentStep)">{{ store.langObj['Previous'] }}</button>
+            <button class='btn btn-primary next' @click="next(setCurrentStep)">{{ store.langObj['Next'] }}</button>
         </div>
 
 
@@ -17,6 +17,8 @@
 <script setup>
 import { useAppStore } from '../store/store';
 const store = useAppStore();
+import {ref,onMounted} from 'vue'
+defineProps(['setCurrentStep']);
 
 const siteTitle = ref('');
 const siteTagLine = ref('');
@@ -32,15 +34,29 @@ const getSiteDetails = async () => {
 
 const updateSiteDetails = () => {
 
-    const params = new URLSearchParams()
+    const formData = new FormData()
 
-    params.append('site_title', siteTitle.value)
-    params.append('site_tagline', siteTagLine.value)
+    formData.append('site_title', siteTitle.value)
+    formData.append('site_tag_line', siteTagLine.value)
 
     fetch('/np-ajax/?action=set_site_details', {
         method: 'post',
-        body: params.toString(),
+        body: formData,
     })
+
+}
+onMounted(() => {
+    getSiteDetails();
+})
+const previous = () => {
+    
+store.step = (store.database == 'mysql'? 3 : 2 );
+ setCurrentStep(store.step);  
+}
+const next = (setCurrentStep) => {
+    updateSiteDetails();
+    store.step = 5;
+    setCurrentStep(5);
 
 }
 </script>

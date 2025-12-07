@@ -24,7 +24,14 @@ export const useAppStore = defineStore('appStore', {
         activeTab:1,
         revisions: [],
         postStatus: 'Draft',
-        postID: null
+        postID: null,
+        postTitle: '',
+        day: '01',
+        month : '01',
+        year : '2025',
+        hour : '00',
+        min : '00',
+        postSlug : '',
        
 
     }),

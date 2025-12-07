@@ -15,14 +15,30 @@
                 <AllElementsAside v-if="store.currentElement" />
             </div>
             <div v-if="store.activeTab === 1" class="tab post-options-aside">
+                <h4>POST STATUS: {{store.postStatus.toUpperCase()}}</h4>
                 
                 <div class="">
-                    <button class="btn btn-primary">Publish</button>
-                    <button class="btn btn-primary">Preview</button>
-                    <button class="btn btn-primary">Save Draft</button>
+                    <button @click="publish" class="btn btn-primary">{{publishText()}}</button>
+                    <a class="btn btn-primary" target="_blank" :href="`/np-admin/preview/${store.postID}`">Preview</a>
+                    <button @click="saveDraft" class="btn btn-primary">{{draftText()}}</button>
                 </div>
+
+                <h4>SLUG</h4>
+                <input class="slug" v-model="store.postSlug"/>
                 
-                <h4>POST STATUS: {{store.postStatus.toUpperCase()}}</h4>
+                <h4>POST DATE</h4>
+                <div class="flex date">
+                    <input class="year" v-model="store.year" />
+                    <p>-</p>
+                    <input class="date-small" v-model="store.month" />
+                    <p>-</p>
+                    <input class="date-small" v-model="store.day" />
+                    <p> </p>
+                    <input class="hour date-small" v-model="store.hour" />
+                    <p>:</p>
+                    <input class="date-small" v-model="store.min" />
+                 </div>
+                
                 
 
                 <h4>REVISIONS</h4>
@@ -49,6 +65,52 @@ import {useAppStore} from '../../store/store';
 const store = useAppStore();
 const changeActiveTab = (tab) => {
     store.activeTab = tab;
+}
+const publish = () => {
+
+    store.postStatus = 'published';
+    savePost();
+    alert('Post published!');
+
+}
+
+const saveDraft = () => {
+    store.postStatus = 'draft';
+    savePost();
+}
+
+const savePost = async () => {
+    
+    const post = {
+        title : store.postTitle,
+        id: store.postID,
+        content : store.rootElement,
+        status : store.postStatus
+    }
+
+    const postJSON = JSON.stringify(post);
+    const formData = new FormData();
+    formData.append('post',postJSON);
+    
+    await fetch('/np-admin/np-ajax/?action=save_post' , {
+        method : 'post',
+        body : formData
+    })
+}
+const publishText = () => {
+    if(store.postStatus == 'published') {
+        return 'Update'
+    } else {
+        return 'Publish'
+    }
+}
+
+const draftText = () => {
+    if(store.postStatus == 'published') {
+        return 'Set Draft'
+    } else {
+        return 'Save Draft'
+    }
 }
 
 </script>

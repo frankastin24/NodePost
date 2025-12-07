@@ -1,5 +1,7 @@
 let {renderAsync} = require('./ejsCompiler');
+
 const fs = require('fs');
+
 const getExtension = (path) => {
     const splitPath = path.split('.');
     return splitPath.length == 1 ? 'jsx' : splitPath[1];
@@ -10,6 +12,12 @@ const __ = require('../np-includes/__')
 const do_admin_stylesheets = require('../np-includes/do_admin_stylesheets')
 
 const do_admin_scripts = require('../np-includes/do_admin_scripts')
+
+const do_stylesheets = require('../np-includes/do_stylesheets')
+
+const getHeader = require('../np-includes/getHeader')
+const getFooter = require('../np-includes/getFooter')
+
 const {get_option} = require('../np-includes/options');
 
 const get_template_part = async (path,viewContext) => {
@@ -20,7 +28,6 @@ const get_template_part = async (path,viewContext) => {
 const get_admin_stylesheets = () => {
     return '';
 }
-
 
 
 const view = async (path,data,context) => {
@@ -36,9 +43,12 @@ const view = async (path,data,context) => {
     const viewContext = {
     "__":__,
     get_template_part,
+    do_stylesheets,
     do_admin_stylesheets,
     do_admin_scripts,
     get_option,
+    getHeader,
+    getFooter,
     global,
     data,
     context,

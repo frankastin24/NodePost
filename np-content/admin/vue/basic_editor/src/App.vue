@@ -26,7 +26,7 @@
 
         <ElementSelector />
 
-        
+        <FileBrowser />
 
     </div>
 </template>
@@ -51,17 +51,59 @@ const selectRootContainer = () => {
 onMounted(async () => {
     store.currentContainer = store.rootElement;
     store.containers.push(store.currentContainer);
+    const splitURL = window.location.href.split('/');
+   
+    if( splitURL[4] == 'edit' ) {
+       
+        store.postID = parseInt(splitURL[5]);
+        const response = await fetch('/np-admin/np-ajax?action=get_post&id='+store.postID);
+        const post = await response.json();
 
-    if( window.location.href.includes('post_id') ) {
-        const splitUrl =  window.location.href.split('post_id=');
-        store.postID = parseInt(splitUrl[1]);
+        store.rootElement = (post.content == '' ? [] : JSON.parse(post.content) );
+      
+        store.currentContainer = store.rootElement;
+        store.postStatus = (post.post_status == '') ? 'draft' : post.post_status;
+        store.postTitle = post.title;
+        store.slug = post.slug;
+        store.containers = [store.rootElement];
+        
+        store.rootElement.forEach((element) => {
+
+            if(element.type == 'container') {
+                store.containers.push(element.elements);
+            }
+
+           
+
+        })
+
+        const dateTime = post.createdAt.substr(0,post.createdAt.length - 5).split('T');
+       
+        const date = dateTime[0].split('-');
+         console.log(date);
+        store.year = date[0];
+        store.month = date[1];
+        store.day = date[2];
+
+        const time = dateTime[1].split(':')
+         console.log(time);
+        store.hour = time[0];
+        store.min = time[1];
+       
     } else {
+
        const splitUrl = window.location.href.split('/')
        const response = await fetch('/np-admin/np-ajax/?action=create_post&post_type='+splitUrl[4] );
        store.postID = await response.text();
-       console.log(store.postID);
+       
     }
 })
+
+const addContainersFromElement = (container) => {
+
+
+
+}
 
 document.addEventListener("paste", function (e) {
 
