@@ -36,15 +36,14 @@
 import { useAppStore } from '../store/store';
 const store = useAppStore();
 import {ref,onMounted} from 'vue'
-defineProps(['setCurrentStep']);
 
-const siteTitle = ref('');
-const siteTagLine = ref('');
 const hasSlugChanged = ref(false);
 const title = ref('');
 const slug = ref('');
 const singular = ref('');
 const plural = ref('');
+const contentEditor = ref(true);
+const pageBuilder = ref(true);
 
 const onTitleInput = (e) => {
     if(!hasSlugChanged.value) {
@@ -58,13 +57,30 @@ const onSlugChange = () => {
     }
 }
 
-const create = () => {
+const create = async () => {
     if(title.value == '') {
        return alert('Please add a title')
     }
     if(slug.value == '') {
        return alert('Please add a slug')
     }
+
+    const json = JSON.stringify({
+        title : title.value,
+        slug: slug.value,
+        singular: singular.value,
+        plural: plural.value,
+        content_editor: contentEditor.value,
+        page_builder : pageBuilder.value
+    })
+    const formData = new FormData();
+    formData.append('cpt', json);
+    await fetch('/np-admin/np-ajax/?action=create_cpt' , {
+        method : 'post',
+        body : formData
+    })
+
+    window.location.href = '/np-admin/cps/view-all';
 }
 
 

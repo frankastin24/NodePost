@@ -13,6 +13,9 @@ const addNoPrivAjax = require('../np-includes/addNoPrivAjax');
 const fs = require('fs')
 const { Op } = require('sequelize');
 const CustomPostType = require('../models/CustomPostType');
+const registerCPT = require('../np-includes/registerCPT');
+const deleteCPT = require('../np-includes/deleteCPT');
+const updateCPT = require('../np-includes/updateCPT');
 class NPAdmin {
 
     static noPrivAjax(request, context) {
@@ -144,6 +147,32 @@ class NPAdmin {
             context.res.send(JSON.stringify(cpts))
 
         })
+
+        addAjax('create_cpt' ,  async (context,request) => {
+           
+           const cpt = JSON.parse(request.cpt);
+           await registerCPT(cpt);
+           context.res.send('success');
+
+        })
+
+        addAjax('delete_cpt' ,  async (context,request) => {
+           
+           await deleteCPT(request.id)
+           
+           context.res.send('success');
+           
+        })
+
+         addAjax('update_cpt' ,  async (context,request) => {
+           
+           await updateCPT(JSON.parse(request.cpt))
+           
+           context.res.send('success');
+           
+        })
+
+        
     }
 
     static async login(request, context) {

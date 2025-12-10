@@ -27,8 +27,8 @@ const getSiteDetails = async () => {
     const response = await fetch('/np-ajax/?action=get_site_details');
     const siteDetails = await response.json();
 
-    siteTitle.value = siteDetails.site_title;
-    siteTagLine.value = siteDetails.site_tag_line;
+    siteTitle.value = siteDetails.site_title ?  siteDetails.site_title : '';
+    siteTagLine.value = siteDetails.site_tag_line ? siteDetails.site_tag_line : '' ;
 
 }
 

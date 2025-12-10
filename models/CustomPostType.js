@@ -9,10 +9,12 @@ const CustomPostType = global.npdb.define('np_custom_post_types', {
   title: DataTypes.STRING,
   slug: DataTypes.STRING,
   menu_name: DataTypes.STRING,
-  basic_editor: DataTypes.BOOLEAN,
+  content_editor: DataTypes.BOOLEAN,
   page_builder: DataTypes.BOOLEAN,
   use_rest: DataTypes.BOOLEAN,
-  top_level: DataTypes.BOOLEAN
+  top_level: DataTypes.BOOLEAN,
+  singular:DataTypes.STRING ,
+  plural:DataTypes.STRING 
 });
 
 module.exports = CustomPostType;
