@@ -27,7 +27,7 @@
       <label>Use page builder</label>
       <input type="checkbox" v-model="currentCPT.page_builder"/>
       
-      <button @click="update(currentCPT)" class="btn btn-primary">Update!</button>
+      <button @click="update(currentCPT,displayEdit)" class="btn btn-primary">Update!</button>
 
 
 </div>
@@ -35,9 +35,9 @@
 
 <script setup>
 
-defineProps(['currentCPT'])
+defineProps(['currentCPT','displayEdit'])
 
-const update = async (cpt) => {
+const update = async (cpt,displayEdit) => {
 
     const json = JSON.stringify(cpt)
     

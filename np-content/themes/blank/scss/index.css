@@ -1,0 +1,413 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "lorimer";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Lorimer No 2 Stencil"), url("../fonts/Lorimer_No2_Stencil.woff") format("woff");
+}
+@font-face {
+  font-family: "Roobert";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Lorimer No 2 Stencil"), url("../fonts/Roobert.woff2") format("woff2");
+}
+@font-face {
+  font-family: "ofelia";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/ofelia.woff2") format("woff2");
+}
+body, html {
+  margin: 0px;
+  padding: 0px;
+}
+
+ul li {
+  list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6, ul, li, a {
+  font-family: "lorimer";
+  margin: 0px;
+  padding: 0px;
+  text-decoration: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.container {
+  width: 90%;
+  margin: auto;
+}
+
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.relative {
+  position: relative;
+}
+
+.center-both {
+  justify-content: center;
+  align-items: center;
+}
+
+#main-header {
+  position: absolute;
+  color: #FFF;
+  width: 100%;
+  z-index: 10;
+  padding-top: 30px;
+  top: 0;
+}
+#main-header #om {
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
+}
+#main-header #om img {
+  width: 100%;
+  opacity: 0.9;
+}
+#main-header #om.portfolio img {
+  width: 80%;
+}
+#main-header .left {
+  gap: 8px;
+}
+#main-header .left h3 {
+  margin-top: 14px;
+  font-size: 26px;
+  color: #dde6f5;
+  letter-spacing: 1px;
+}
+#main-header ul {
+  gap: 40px;
+}
+#main-header li {
+  color: #FFF;
+  letter-spacing: 0px;
+  font-size: 17px;
+  margin-top: 15px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+  position: relative;
+  cursor: pointer;
+  font-family: "Roobert";
+}
+#main-header li a {
+  color: #dde6f5;
+  display: block;
+  letter-spacing: 1px;
+}
+#main-header li > ul {
+  display: none;
+}
+#main-header li:hover > ul {
+  position: absolute;
+  display: block;
+  width: 200px;
+  z-index: 100;
+  margin-top: 7px;
+  margin-left: -25px;
+}
+#main-header li:hover > ul li {
+  margin-top: 0px;
+}
+
+footer {
+  padding: 60px 0px;
+  background: rgba(0, 0, 0, 0.1);
+}
+footer p {
+  font-family: "Roobert";
+}
+
+#home-hero {
+  background-image: url(../img/cityscape.jpg);
+  background-size: cover;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+#home-hero h1 {
+  opacity: 0;
+  color: #FFF;
+  position: absolute;
+  z-index: 50;
+  opacity: 0.9;
+  top: 119px;
+  font-size: 150px;
+  line-height: 130px;
+  color: #dde6f5;
+  letter-spacing: -4px;
+}
+#home-hero .container > img {
+  position: absolute;
+  left: calc(50% - 378px);
+  top: -75px;
+}
+#home-hero h2 {
+  position: absolute;
+  font-size: 23px;
+  top: 400px;
+  letter-spacing: 2px;
+  line-height: 30px;
+  margin-top: -4px;
+  font-family: "Roobert";
+  font-weight: normal;
+  font-style: normal;
+  color: #dde6f5;
+}
+#home-hero h2:nth-child(3) {
+  top: 510px;
+}
+#home-hero a {
+  position: absolute;
+  bottom: 400px;
+}
+#home-hero a img {
+  width: 40px;
+}
+#home-hero a:last-child {
+  left: 60px;
+}
+
+#portfolio-hero {
+  height: 740px;
+  width: 100%;
+  position: relative;
+}
+#portfolio-hero .slides {
+  width: 100%;
+  height: 100%;
+}
+#portfolio-hero .slides .slide {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: 3s opacity;
+}
+#portfolio-hero .slides .slide.active {
+  opacity: 1;
+}
+#portfolio-hero .overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  position: absolute;
+  top: 0;
+}
+#portfolio-hero .overlay h3 {
+  color: #dde6f5;
+  position: absolute;
+  bottom: 60px;
+  font-size: 100px;
+}
+
+#portfolio {
+  width: 80%;
+  margin-left: 10%;
+  margin-bottom: 60px;
+}
+#portfolio h1 {
+  font-size: 80px;
+  margin-bottom: 20px;
+  margin-top: 60px;
+}
+#portfolio .portfolio-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+#portfolio .portfolio-container > div {
+  width: 60%;
+}
+#portfolio .portfolio-container > a:nth-child(2) {
+  max-width: calc(40% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(3) {
+  max-width: calc(60% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(4) {
+  max-width: calc(60% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(5) {
+  max-width: calc(40% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(6) {
+  max-width: calc(40% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(7) {
+  max-width: calc(60% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(9) {
+  max-width: calc(60% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(10) {
+  max-width: calc(40% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(11) {
+  max-width: calc(60% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(13) {
+  max-width: calc(40% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(14) {
+  max-width: calc(60% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(15) {
+  max-width: calc(60% - 20px);
+}
+#portfolio .portfolio-container > a:nth-child(16) {
+  max-width: calc(40% - 20px);
+}
+#portfolio .portfolio-container .portfolio-entry {
+  border: 1px solid #dde6f5;
+  width: 50%;
+  display: block;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 360px;
+  width: 100%;
+  position: relative;
+  margin-top: 0px;
+}
+#portfolio .portfolio-container .portfolio-entry h2 {
+  font-size: 60px;
+  margin: 40px;
+  text-transform: uppercase;
+  color: #dde6f5;
+  width: 70%;
+}
+#portfolio .portfolio-container .portfolio-entry .overlay {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  height: 100%;
+  position: absolute;
+}
+#portfolio .portfolio-container .portfolio-entry p {
+  font-family: "Roobert";
+  color: #dde6f5;
+  width: calc(100% - 80px);
+  margin-left: 40px;
+  font-size: 20px;
+  line-height: 26px;
+  text-wrap: l;
+  text-wrap: balance;
+}
+#portfolio .portfolio-container .portfolio-entry p span {
+  text-decoration: underline;
+}
+#portfolio .portfolio-container .portfolio-entry .skills {
+  width: calc(100% - 80px);
+  text-align: right;
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  justify-content: flex-end;
+  gap: 20px;
+}
+#portfolio .portfolio-container .portfolio-entry .skills span {
+  color: #000;
+  background: #dde6f5;
+  display: inline-block;
+  font-family: "Roobert";
+  text-transform: uppercase;
+  padding: 10px 20px;
+}
+#portfolio .portfolio-container .portfolio-entry.fusemvc-–-php-framework {
+  background-size: 161%;
+  background-position: 92px;
+}
+#portfolio .portfolio-container .portfolio-entry.apexit-–-web-hosting {
+  background-size: 250%;
+  background-position: 0% 0%;
+  background-repeat: no-repeat;
+}
+#portfolio .portfolio-container .portfolio-entry.alt-radio-logo {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-top: 0px;
+}
+
+#single-portfolio-hero {
+  background-size: cover;
+  position: absolute;
+  height: 550px;
+  width: 100%;
+  top: 0;
+}
+#single-portfolio-hero .overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+}
+#single-portfolio-hero .overlay h3 {
+  color: #dde6f5;
+  position: absolute;
+  bottom: 60px;
+  font-size: 100px;
+}
+#single-portfolio-hero .overlay .links {
+  position: absolute;
+  bottom: 30px;
+  gap: 40px;
+}
+#single-portfolio-hero .overlay .links a {
+  font-family: "Roobert";
+  color: #dde6f5;
+  font-size: 17px;
+  letter-spacing: 0px;
+  text-decoration: underline;
+}
+#single-portfolio-hero.single-alt-radio-logo {
+  background-size: contain;
+  background-position: center;
+}
+
+.single-project-content {
+  padding-top: 540px;
+  margin-top: 40px;
+}
+.single-project-content p, .single-project-content li {
+  font-family: "Roobert";
+  font-size: 30px;
+  width: 60%;
+  line-height: 40px;
+  margin-top: 20px;
+}
+.single-project-content p strong, .single-project-content li strong {
+  font-weight: bold;
+}
+.single-project-content h4, .single-project-content h2 {
+  margin: 60px 0px;
+  margin-top: 80px;
+  font-size: 50px;
+}
+.single-project-content li {
+  margin-bottom: 20px;
+}
+.single-project-content .navigation a {
+  font-size: 25px;
+  text-decoration: underline;
+  margin: 80px 0px;
+  display: inline-block;
+  color: #3b5073;
+}/*# sourceMappingURL=index.css.map */

@@ -7,7 +7,7 @@ module.exports = () => {
     const stylesheetMap = {};
     if (!Array.isArray(global.__stylesheets)) return html;
 
-    global._stylesheets.forEach(stylesheet => {
+    global.__stylesheets.forEach(stylesheet => {
         stylesheetMap[stylesheet.name] = stylesheet;
     });
 

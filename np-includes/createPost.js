@@ -6,7 +6,7 @@ module.exports = async (post) => {
             author: post.author,
              title: post.title,
              content: post.content,
-             post_type : post.postType,
+             post_type : post.post_type,
              slug : post.slug,
              post_status : post.status
     })

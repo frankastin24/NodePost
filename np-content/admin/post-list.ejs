@@ -8,24 +8,27 @@
         
     </script>
         <div class="dash-main">
-
-            <h1>Custom Post Types</h1>
+            <header class="list-posts-header flex">
+            <h1>All <%= data.topMenu %></h1>
+            <a class="btn btn-primary" href="/np-admin/create-post/<%= cpt.slug %>">Create <%= cpt.singular %></a>
+            </header>
             
-            <table width="100%">
+            <table class="list-posts-table" width="100%">
                 <tr>
-                    <th>Title</th>
-                    <th>Slug</th>
+                    <th style="width:60%;">Title</th>
                     
-                    <th></th>
-                     <th></th>
+                    <th style="width:20%;">Author</th>
+                    <th style="width:20%;">Date</th>
+                    
                 </tr>
                
                 <% for (post of data.posts) { %>
+
                     <tr data-id="<%= post.id %>">
-                        <td><%= post.title %></td>
-                        <td><%= post.slug %></td>
-                        <td><a href="/np-admin/edit/<%= post.id %>">Edit</a></td>
-                        <td><button class="delete-cpt btn btn-red">Delete</button></td>
+                        <td class="title"><a href="/np-admin/edit/<%= post.id %>"><%= post.title %></a></td>
+                        <td></td>
+                        <td><p><%= post.post_status %></p><p><%= post.updatedAt %></p></td>
+
                     </tr>
                 <% } %>
             </table>

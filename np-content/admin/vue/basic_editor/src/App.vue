@@ -80,20 +80,20 @@ onMounted(async () => {
         const dateTime = post.createdAt.substr(0,post.createdAt.length - 5).split('T');
        
         const date = dateTime[0].split('-');
-         console.log(date);
         store.year = date[0];
         store.month = date[1];
         store.day = date[2];
-
         const time = dateTime[1].split(':')
-         console.log(time);
         store.hour = time[0];
         store.min = time[1];
        
     } else {
 
        const splitUrl = window.location.href.split('/')
-       const response = await fetch('/np-admin/np-ajax/?action=create_post&post_type='+splitUrl[4] );
+       
+       
+       const response = await fetch('/np-admin/np-ajax/?action=create_post&post_type='+splitUrl[5] );
+       
        store.postID = await response.text();
        
     }

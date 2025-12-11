@@ -19,7 +19,7 @@ const updateCPT = require('../np-includes/updateCPT');
 class NPAdmin {
 
     static noPrivAjax(request, context) {
-        console.log(context.req.body)
+       
         if (global.__noPrivAjax && global.__noPrivAjax[request.action]) {
 
             global.__noPrivAjax[request.action](context, request);
@@ -72,7 +72,7 @@ class NPAdmin {
         addAjax('upload_file', (context, request) => {
             const req = context.req;
             const res = context.res;
-           
+
 
             const Busboy = require('busboy');
             const fs = require('fs');
@@ -127,7 +127,7 @@ class NPAdmin {
             req.pipe(busboy);
         })
 
-        addAjax('change_file_name', (context,request) => {
+        addAjax('change_file_name', (context, request) => {
             const fs = require('fs');
             const oldPath = global.__app_path + request.oldPath;
             const newPath = global.__app_path + request.newPath;
@@ -140,39 +140,39 @@ class NPAdmin {
             }
         })
 
-        addAjax('get_cpts' ,  async (context) => {
-            
+        addAjax('get_cpts', async (context) => {
+
             const cpts = await CustomPostType.findAll();
 
             context.res.send(JSON.stringify(cpts))
 
         })
 
-        addAjax('create_cpt' ,  async (context,request) => {
-           
-           const cpt = JSON.parse(request.cpt);
-           await registerCPT(cpt);
-           context.res.send('success');
+        addAjax('create_cpt', async (context, request) => {
+
+            const cpt = JSON.parse(request.cpt);
+            await registerCPT(cpt);
+            context.res.send('success');
 
         })
 
-        addAjax('delete_cpt' ,  async (context,request) => {
-           
-           await deleteCPT(request.id)
-           
-           context.res.send('success');
-           
+        addAjax('delete_cpt', async (context, request) => {
+
+            await deleteCPT(request.id)
+
+            context.res.send('success');
+
         })
 
-         addAjax('update_cpt' ,  async (context,request) => {
-           
-           await updateCPT(JSON.parse(request.cpt))
-           
-           context.res.send('success');
-           
+        addAjax('update_cpt', async (context, request) => {
+
+            await updateCPT(JSON.parse(request.cpt))
+
+            context.res.send('success');
+
         })
 
-        
+
     }
 
     static async login(request, context) {
@@ -228,45 +228,89 @@ class NPAdmin {
 
         let offset, numPages, displayCPTs;
 
+        let topMenu = '';
+
         if (request.param1 == 'create-post') {
 
-            const cpt = global.__cpts.find((obj) => {
+            if(request.param2 == 'page') {
+
+                 topMenu = 'Pages';
+                 const cpt = {
+                    title:'Page'
+                 }
+
+            return view(admin_views_path + '/post-create', { basic_editor: true,cpt,  topMenu }, context);
+
+
+            } else {
+
+                  const cpt = global.__cpts.find((obj) => {
                 return obj.slug == request.param2;
             })
 
-            return view(admin_views_path + '/post-create', { basic_editor: true, cpt: cpt }, context);
+            topMenu = cpt.title;
 
+            cpt.title = cpt.title + ' '+ cpt.singular[0].toUpperCase() + cpt.singular.slice(1,cpt.singular.length);
+
+            return view(admin_views_path + '/post-create', { basic_editor: true, cpt: cpt, topMenu }, context);
+
+
+            }
+          
         }
 
         if (request.param1 == 'cpt') {
 
-            
-            return view(admin_views_path + '/cpt', {}, context);
-            
+            topMenu = 'CPT';
+            return view(admin_views_path + '/cpt', { topMenu }, context);
+
         }
 
 
 
         if (request.param1 == 'edit') {
 
-            const currentPost = getPost(request.param2);
-
+            const currentPost = await getPost(request.param2);
+            
+            topMenu = currentPost.post_type[0].toUpperCase() + currentPost.post_type.slice(1, currentPost.post_type.length);
+            topMenu = topMenu == 'Page' ? 'Pages' : topMenu;
+            
             global.post = currentPost;
 
-            return view(admin_views_path + 'edit', { post: currentPost }, context);
+            return view(admin_views_path + 'edit', { post: currentPost, topMenu }, context);
         }
 
         if (request.param1 == 'view-all') {
 
             const posts = await Post.findAll({
-                post_type: request.param2,
-                post_staus : {
-                    [Op.ne] : 'new'
+                where: {
+                    post_type: request.param2,
+                    post_status: {
+                        [Op.ne]: 'new'
+                    }
                 }
-            })
-            
 
-            return view(admin_views_path + 'post-list', { posts }, context);
+            })
+            topMenu = request.param2[0].toUpperCase() + request.param2.slice(1, request.param2.length);
+            topMenu = topMenu == 'Page' ? 'Pages' : topMenu;
+            let cpt;
+
+            if(topMenu == 'Pages') {
+                cpt = {
+                    title : 'Pages',
+                    slug : 'page',
+                    singular : 'page',
+                    plural : 'pages'
+                }
+            }  else {
+                const foundCPT = await CustomPostType.findAll({
+                    where : {
+                        slug: request.param2
+                    }
+                })
+                cpt = foundCPT[0];
+            }
+            return view(admin_views_path + 'post-list', { posts, topMenu,cpt }, context);
 
         }
 
@@ -276,7 +320,9 @@ class NPAdmin {
 
             global.settingsPage = currentCPT;
 
-            return view(admin_views_path + 'post', {}, context);
+            topMenu = 'Settings'
+
+            return view(admin_views_path + 'post', { topMenu }, context);
 
         }
 
@@ -390,7 +436,7 @@ class NPAdmin {
     }
 
     static renameFileFolder(request, context) {
-       
+
     }
 
 

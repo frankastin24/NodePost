@@ -7,8 +7,9 @@
 
       <% for (menuItem of global.admin_menu ) { %>
       
-      <li class="menu-item">
-        <div class="title flex">
+      <li class="menu-item <%= menuItem.pageName == data.topMenu ? 'open' :'' %>">
+        
+         <div class="title flex">
       
         <% if(menuItem.dashIcon) { %>
             <img width="18" src="/np-content/admin/img/<%= menuItem.dashIcon %>.svg"/>

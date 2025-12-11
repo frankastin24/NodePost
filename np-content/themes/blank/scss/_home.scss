@@ -1,0 +1,56 @@
+#home-hero {
+    background-image:url(../img/cityscape.jpg);
+    background-size: cover;
+    height:100vh;
+    width:100%;
+    overflow: hidden;
+    position: relative;
+   
+    h1 {
+        opacity:0;
+        color:#FFF;
+        position: absolute;
+        z-index:50;
+        opacity: 0.9;
+
+        top: 119px;
+        font-size: 150px;
+        line-height: 130px;
+        color: #dde6f5;
+        letter-spacing: -4px;
+
+    }
+    .container {
+        > img {
+            position: absolute;
+            left: calc(50% - 378px);
+    top: -75px;
+        }
+    }
+    h2 {
+        
+            position: absolute;
+            font-size: 23px;
+            top: 400px;
+            letter-spacing: 2px;
+            line-height: 30px;
+            margin-top: -4px;
+            font-family: "Roobert";
+            font-weight: normal;
+            font-style: normal;
+            color: #dde6f5;
+            &:nth-child(3) {
+                top:510px;
+            }
+    }
+    a {
+        position: absolute;
+        bottom: 400px;
+        img {
+            width:40px;
+        }
+        &:last-child {
+            left:60px;
+        }
+    }
+}

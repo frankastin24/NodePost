@@ -1,0 +1,29 @@
+
+<div class="single-" style="background-image:url()" id="single-portfolio-hero" >
+    <div class="overlay">
+        <div class="container">
+           <h3><%= post.title %></h3>
+           <div class="links flex">
+       
+       
+       <a href="" class="project_link"></a>
+      
+   </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="container single-project-content">
+  
+    <%- theContent(post) %>
+
+    <div class="navigation flex space-between">
+        <a href="/work"><< Back to portfolio</a>
+        <?= previous_post_link('%link','>> %title');?>
+    </div>
+</div>
+
+<?php
+get_footer();
+?>

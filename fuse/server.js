@@ -32,11 +32,11 @@ const multerMiddleWare = (req,res,next) => {
  
 }
 
-app.all('/{*any}', multerMiddleWare, (req, res) => {
+app.all('/{*any}', multerMiddleWare, async (req, res) => {
   const NPAdmin = require('../controllers/NPAdmin');
   const NPInstall = require('../controllers/NPInstall');
 
-  const activeTheme = get_option('active_theme');
+  const activeTheme = await get_option('active_theme');
 
   global.__active_theme = activeTheme;
   

@@ -15,6 +15,8 @@
     }
     .menu-item {
         padding: 20px;
+        padding-top:10px;
+        margin-top:10px;
         padding-left:30px;
 
         padding-bottom: 0px;
@@ -39,17 +41,21 @@
         .sub-menu {
             display: none;
             background: #8586a3;
-           
+            padding-top:8px;
             margin-top:8px;
+            width: calc(100% + 20px);
             a {
-                 padding:6px;
-                margin-bottom:6px;
+                 padding:8px;
+                 padding-top:0px;
+                 padding-left:10px;
                 display:block;
                 color:#FFF;
+                font-size:15px;
             }
         }
 
         &.open {
+            background:#eaadad;
             .sub-menu {
                 display: block;
             }

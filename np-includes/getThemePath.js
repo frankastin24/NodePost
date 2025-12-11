@@ -1,3 +1,3 @@
 module.exports = () => {
-    return global.__app_path + '/np-content/themes/' + global.active_theme + '/'; 
+    return '/np-content/themes/' + global.__active_theme + '/'; 
 }

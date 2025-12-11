@@ -1,0 +1,75 @@
+#main-header {
+    position: absolute;
+    color:#FFF;
+    width:100%;
+    z-index:10;
+    padding-top: 30px;
+    top:0;
+    #om {
+    
+       border-radius: 100%;
+      
+       
+       width:50px;
+       height:50px;
+       img {
+          width: 100%;
+          opacity: 0.9;
+       }
+       &.portfolio {
+        img {
+            width:80%;
+        }
+       }
+    }
+    .left {
+        gap:8px;
+        h3 {
+            margin-top:14px;
+            font-size:26px;
+            color:#dde6f5;
+            letter-spacing: 1px;
+        }
+    }
+    ul {
+        gap:40px;
+    }
+    
+    li {
+        color: #FFF;
+        letter-spacing: 0px;
+        font-size: 17px;
+        margin-top: 15px;
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+        
+      
+        position: relative;
+        cursor: pointer;
+        font-family: "Roobert";
+        a {
+            color:#dde6f5;
+          
+            display: block;
+            
+            letter-spacing: 1px;
+        }
+        > ul {
+            display:none;
+        }
+        &:hover {
+            
+            > ul {
+                position: absolute;
+                display:block;
+                width:200px;
+                z-index:100;
+                margin-top:7px;
+                margin-left:-25px;
+                li {
+                    margin-top:0px;
+                    
+                }
+            }
+        }
+    }
+}

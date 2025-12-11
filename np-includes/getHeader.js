@@ -1,11 +1,14 @@
 const getThemePath = require('./getThemePath');
-module.exports = async (headerName = false) => {
+const fs = require('fs');
+let {renderAsync} = require('../fuse/ejsCompiler');
+
+module.exports = async (headerName = false,viewContext) => {
   let ejxstring;
     if(headerName) {
-       ejxstring = fs.readFileSync(getThemePath + 'header-'+headerName+'.ejs', 'utf8');
+       ejxstring = fs.readFileSync(global.__app_path + getThemePath() + 'header-'+headerName+'.ejs', 'utf8');
     } else {
-       ejxstring = fs.readFileSync(getThemePath + 'header.ejs', 'utf8');
+       ejxstring = fs.readFileSync(global.__app_path + getThemePath() + 'header.ejs', 'utf8');
     }
-    
-    return await renderAsync(ejxstring,viewContext);;
+    const template = await renderAsync(ejxstring,viewContext)
+    return template;
 }

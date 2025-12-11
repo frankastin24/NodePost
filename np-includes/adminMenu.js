@@ -1,5 +1,5 @@
 const add_action = require('./addAction')
-
+const capatalize = require('./capatalize')
 module.exports =  () => {
 
         add_action('admin_menu', async (context) => {
@@ -11,6 +11,25 @@ module.exports =  () => {
                 dashIcon : 'museo-white',
                 pageURL : '/np-admin/museo'
             })
+
+             global.admin_menu.push({
+                pageName : 'Pages',
+                dashIcon : 'pages',
+                subMenu: [
+                    {
+                            pageName: 'All Pages',
+                            pageURL : 'view-all/page'
+                    },
+                    {
+                            pageName: 'Create Page',
+                            pageURL : 'create-post/page'
+                    },
+                    {
+                            pageName: 'Templates',
+                            pageURL : 'templates/page'
+                    },
+                ] 
+            })
             
             global.__cpts.forEach((CPT) => {
                 global.admin_menu.push({
@@ -19,14 +38,14 @@ module.exports =  () => {
                     slug : CPT.slug,
                     subMenu : [
                         {
-                            pageName: 'View All',
+                            pageName: 'All '+ capatalize(CPT.plural),
 
                             pageURL : 'view-all/'+CPT.slug
                         
                         },
                         {
                             
-                            pageName: 'Create New',
+                            pageName: 'Create ' + capatalize(CPT.singular),
                             
                             pageURL : 'create-post/'+CPT.slug
                         
@@ -42,31 +61,18 @@ module.exports =  () => {
                 })
             })
 
-            global.admin_menu.push({
-                pageName : 'Pages',
-                dashIcon : 'pages',
-                subMenu: [
-                    {
-                            pageName: 'View All',
-                            pageURL : 'pages/view-all'
-                    },
-                    {
-                            pageName: 'Add New',
-                            pageURL : 'pages/add'
-                    },
-                ] 
-            })
+           
 
             global.admin_menu.push({
                 pageName : 'CPT',
                 dashIcon : 'posts',
                 subMenu: [
                     {
-                            pageName: 'View All',
+                            pageName: 'All CPTs',
                             pageURL : 'cpt/view-all'
                     },
                     {
-                            pageName: 'Add New',
+                            pageName: 'Create CPT',
                             pageURL : 'cpt/add'
                     },
                 ] 

@@ -17,8 +17,9 @@ const do_stylesheets = require('../np-includes/do_stylesheets')
 
 const getHeader = require('../np-includes/getHeader')
 const getFooter = require('../np-includes/getFooter')
-
+const npHead = require('../np-includes/npHead')
 const {get_option} = require('../np-includes/options');
+const getThemePath = require('../np-includes/getThemePath');
 
 const get_template_part = async (path,viewContext) => {
     const ejxstring = fs.readFileSync(global.__app_path + path + '.ejs', 'utf8');
@@ -47,8 +48,10 @@ const view = async (path,data,context) => {
     do_admin_stylesheets,
     do_admin_scripts,
     get_option,
+    npHead,
     getHeader,
     getFooter,
+    getThemePath,
     global,
     data,
     context,
