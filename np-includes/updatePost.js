@@ -20,6 +20,7 @@ module.exports = async (post) => {
          
         if(post.slug) {
             foundPost.slug = post.slug;
+           
         }
         
         if(post.status) {

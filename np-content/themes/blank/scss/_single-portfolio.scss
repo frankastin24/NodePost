@@ -5,6 +5,10 @@
     height: 550px;
     width: 100%;
     top:0;
+    &.about-header {
+         background-size: contain !important;
+         
+    }
     .overlay {
         width: 100%;
         height: 100%;

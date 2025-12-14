@@ -1,50 +1,50 @@
-<%- await getHeader('portfolio',viewContext) %>
-
-   
-        <div id="portfolio-hero">
+<%- await getHeader(false,viewContext) %>
 
 
-            <div class="slides">
+    <div id="portfolio-hero">
 
 
-                <div style="background-image:url()" class="slide">
+        <div class="slides">
 
-                </div>
 
+            <div style="background-image:url()" class="slide">
 
             </div>
 
-            <div class="overlay">
-                <div class="container realtive">
-                    <h3>PORTFOLIO</h3>
-                </div>
-            </div>
+
         </div>
 
+        <div class="overlay">
+            <div class="container realtive">
+                <h3>PORTFOLIO</h3>
+            </div>
+        </div>
+    </div>
 
 
 
-        <div id="portfolio" class="container flex">
 
-            <div class="portfolio-container">
+    <div id="portfolio" class="container flex">
 
-                <% for (post of posts) { %>
-                    <a class="portfolio-entry" href="/work/<%= post.slug %>" style="background-image:url()">
-                        <div class="overlay">
+        <div class="portfolio-container">
 
-                            <h2>
-                                <%= post.title %>
-                            </h2>
+            <% for (post of posts) { %>
+                <a class="portfolio-entry" href="/work/<%= post.slug %>" style="background-image:url(<%= getFeaturedImage(post) %>)">
+                    <div class="overlay">
 
-                            <div class="skills flex">
-                                <span></span>
-                            </div>
+                        <h2>
+                            <%= post.title %>
+                        </h2>
+
+                        <div class="skills flex">
+                            <span></span>
                         </div>
-                    </a>
-                    <% } %>
+                    </div>
+                </a>
+                <% } %>
 
 
-            </div>
         </div>
+    </div>
 
-          <%- await getFooter() %>
+    <%- await getFooter() %>

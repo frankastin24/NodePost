@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input placeholder="Post Title" type="text" class="edit-post-title" v-model="store.postTitle" />
+        <input @focus="inputFocus" @blur="inputBlur" @input="onTitleInput" placeholder="Post Title" type="text" class="edit-post-title" v-model="store.postTitle" />
 
         <FeaturedImage />
 
@@ -41,8 +41,22 @@ import FileBrowser from './components/FileBrowser/FileBrowser.vue';
 import { useAppStore } from './store/store';
 import FeaturedImage from './components/FeaturedImage.vue'
 import ElementSelector from './components/ElementSelector.vue';
+let inputIsFocused = false;
+
 
 const store = useAppStore();
+
+const inputFocus = () => {
+    inputIsFocused = true;
+}
+
+const inputBlur = () => {
+    inputIsFocused = false;
+}
+
+const onTitleInput = (e) => {
+    store.postSlug = e.target.value.toLowerCase().replaceAll(' ','-');
+}
 
 const selectRootContainer = () => {
     store.currentContainer = store.rootElement;
@@ -59,26 +73,35 @@ onMounted(async () => {
         const response = await fetch('/np-admin/np-ajax?action=get_post&id='+store.postID);
         const post = await response.json();
 
+        const featuredResponse = await fetch('/np-admin/np-ajax?action=get_post_meta&postID='+store.postID+'&key=featured_image');
+        const featuredImage = await featuredResponse.text();
+
+        if(featuredImage !== 'false') {
+            store.featuredImage = featuredImage;
+        }
+
         store.rootElement = (post.content == '' ? [] : JSON.parse(post.content) );
       
         store.currentContainer = store.rootElement;
         store.postStatus = (post.post_status == '') ? 'draft' : post.post_status;
         store.postTitle = post.title;
-        store.slug = post.slug;
+        store.postSlug = post.slug;
         store.containers = [store.rootElement];
+        store.postType = post.post_type;
+
+        const cfResponse = await fetch('/np-admin/np-ajax/?action=get_custom_fields&post_type='+store.postType );
+
+        store.customFields = await cfResponse.json();
         
         store.rootElement.forEach((element) => {
 
             if(element.type == 'container') {
                 store.containers.push(element.elements);
             }
-
-           
-
         })
 
         const dateTime = post.createdAt.substr(0,post.createdAt.length - 5).split('T');
-       
+        
         const date = dateTime[0].split('-');
         store.year = date[0];
         store.month = date[1];
@@ -90,26 +113,28 @@ onMounted(async () => {
     } else {
 
        const splitUrl = window.location.href.split('/')
-       
-       
-       const response = await fetch('/np-admin/np-ajax/?action=create_post&post_type='+splitUrl[5] );
+
+       store.postType = splitUrl[5];
+
+       const response = await fetch('/np-admin/np-ajax/?action=create_post&post_type='+store.postType );
        
        store.postID = await response.text();
+       
+
+       const cfResponse = await fetch('/np-admin/np-ajax/?action=get_custom_fields&post_type='+store.postType );
+
+       store.customFields = await cfResponse.json();
+       
        
     }
 })
 
-const addContainersFromElement = (container) => {
-
-
-
-}
 
 document.addEventListener("paste", function (e) {
 
     const pasted = (e.clipboardData || window.clipboardData).getData('text/html');
 
-    if (pasted) {
+    if (pasted && !inputIsFocused) {
         const elements = parseHTML(pasted);
 
         elements.forEach((element) => {

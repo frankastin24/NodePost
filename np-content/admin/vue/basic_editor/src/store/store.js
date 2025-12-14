@@ -23,6 +23,7 @@ export const useAppStore = defineStore('appStore', {
         displayElements:true,
         activeTab:1,
         revisions: [],
+        postType : '',
         postStatus: 'Draft',
         postID: null,
         postTitle: '',
@@ -32,6 +33,8 @@ export const useAppStore = defineStore('appStore', {
         hour : '00',
         min : '00',
         postSlug : '',
+        hasSlugChanged : false,
+        customFields : []
        
 
     }),

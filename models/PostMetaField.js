@@ -1,17 +1,17 @@
 const {DataTypes} = require('sequelize');
 
-const PostMeta = global.npdb.define('np_post_meta', {
+const PostMetaField = global.npdb.define('np_options', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,  
   },
-  postID: DataTypes.INTEGER,
-  key: DataTypes.STRING,
-  value: DataTypes.STRING,
+  cpt: DataTypes.INTEGER,
+  title: DataTypes.STRING,
+  type: DataTypes.STRING,
 });
 
-module.exports = PostMeta;
+module.exports = PostMetaField;
 
 (async ()=> {
     await global.npdb.sync();

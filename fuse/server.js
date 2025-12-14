@@ -5,7 +5,9 @@ const contextMiddleware = require('./context')
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const serveStaticIfExists = require('./serveStatic')
 const app = express();
-const port = 80;
+
+const port = (process.argv[2] ? process.argv[2] : 80 );
+
 const multer =  require('multer') ;
 const { get_option } = require('../np-includes/options');
 const upload = multer();
@@ -57,5 +59,5 @@ app.all('/{*any}', multerMiddleWare, async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost`);
+  console.log(`Server running at http://localhost:${port}`);
 });

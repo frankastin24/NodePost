@@ -3,13 +3,14 @@
 <section class="flex">
 
     <%- get_template_part('/np-content/admin/components/sidebar',viewContext) %>
+
     <script>
         const adminURL = "<%= adminURL %>";
         
     </script>
         <div class="dash-main">
             <header class="list-posts-header flex">
-            <h1>All <%= data.topMenu %></h1>
+            <h1>All <%= cpt.plural[0].toUpperCase() + cpt.plural.slice(1,cpt.plural.length) %></h1>
             <a class="btn btn-primary" href="/np-admin/create-post/<%= cpt.slug %>">Create <%= cpt.singular %></a>
             </header>
             
@@ -27,7 +28,7 @@
                     <tr data-id="<%= post.id %>">
                         <td class="title"><a href="/np-admin/edit/<%= post.id %>"><%= post.title %></a></td>
                         <td></td>
-                        <td><p><%= post.post_status %></p><p><%= post.updatedAt %></p></td>
+                        <td><p><%= post.post_status %></p><p><%=   ((post.updatedAt.getMonth() > 8) ? (post.updatedAt.getMonth() + 1) : ('0' + (post.updatedAt.getMonth() + 1))) + '/' + ((post.updatedAt.getDate() > 9) ? post.updatedAt.getDate() : ('0' + post.updatedAt.getDate())) + '/' + post.updatedAt.getFullYear()  %></p></td>
 
                     </tr>
                 <% } %>

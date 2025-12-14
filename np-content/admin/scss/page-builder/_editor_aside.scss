@@ -7,7 +7,6 @@
     .tabs {
         
         overflow: scroll;
-        
         header {
             button {
                 padding: 10px;
@@ -65,6 +64,7 @@
                 }
                 .year {
                     max-width:50px;
+                    width: 46px;
                 }
                 .hour {
                     margin-left:20px;

@@ -1,6 +1,5 @@
-module.exports = (context) => {
+module.exports = (post) => {
 
-    const post = context.post;
     const elements = JSON.parse(post.content);
 
     let html = '';

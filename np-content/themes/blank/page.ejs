@@ -1,0 +1,19 @@
+<%- getHeader(false, viewContext) %>
+
+<div class="about-header" style="background-image:url(<%= getFeaturedImage(post) %>)" id="single-portfolio-hero" >
+    <div class="overlay">
+        <div class="container">
+           <h3><%= post.title %></h3>
+           
+        </div>
+    </div>
+
+</div>
+
+<div class="container single-project-content">
+  
+    <%- theContent(post) %>
+
+</div>
+
+<%- getFooter() %>

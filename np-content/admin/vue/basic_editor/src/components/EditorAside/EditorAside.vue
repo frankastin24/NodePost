@@ -85,7 +85,8 @@ const savePost = async () => {
         title : store.postTitle,
         id: store.postID,
         content : store.rootElement,
-        status : store.postStatus
+        status : store.postStatus,
+        slug : store.postSlug
     }
 
     const postJSON = JSON.stringify(post);
@@ -96,6 +97,17 @@ const savePost = async () => {
         method : 'post',
         body : formData
     })
+
+    const featuredFormData = new FormData();
+    featuredFormData.append('key','featured_image')
+    featuredFormData.append('postID',store.postID)
+    featuredFormData.append('value', store.featuredImage);
+
+    await fetch('/np-admin/np-ajax/?action=update_post_meta' , {
+        method : 'post',
+        body : featuredFormData
+    })
+
 }
 const publishText = () => {
     if(store.postStatus == 'published') {

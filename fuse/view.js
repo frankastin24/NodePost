@@ -20,6 +20,8 @@ const getFooter = require('../np-includes/getFooter')
 const npHead = require('../np-includes/npHead')
 const {get_option} = require('../np-includes/options');
 const getThemePath = require('../np-includes/getThemePath');
+const theContent = require('../np-includes/theContent');
+const getFeaturedImage = require('../np-includes/getFeaturedImage');
 
 const get_template_part = async (path,viewContext) => {
     const ejxstring = fs.readFileSync(global.__app_path + path + '.ejs', 'utf8');
@@ -52,6 +54,8 @@ const view = async (path,data,context) => {
     getHeader,
     getFooter,
     getThemePath,
+    theContent,
+    getFeaturedImage,
     global,
     data,
     context,

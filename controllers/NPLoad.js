@@ -57,6 +57,22 @@ class NPLoad {
             //Check if post
 
 
+            //Check if page 
+
+            const foundPages = await Post.findAll({
+                where : {
+                    post_type : 'page',
+                    slug : request.urlParam1,
+                    post_status : 'published'
+                }
+            })
+
+            if(foundPages.length > 0) {
+                const post = foundPages[0];
+                return view(themePath + 'page', { post }, context);
+            }
+
+
             // Check if cpt
 
             const foundCPTs = await CustomPostType.findAll({
@@ -76,7 +92,7 @@ class NPLoad {
                         }
                     })
 
-                    if(posts.length > 0) {
+                    if(posts) {
 
                         const post = posts[0];
 
@@ -98,7 +114,11 @@ class NPLoad {
 
                     });
 
-                    return view(themePath + 'archive', { posts }, context);
+                    if(posts) {
+                         return view(themePath + 'archive', { posts }, context);
+                    }
+
+                  
 
                 }
 
@@ -107,7 +127,7 @@ class NPLoad {
 
             }
         }
-
+return view(themePath + '404', { }, context);
 
     }
 }

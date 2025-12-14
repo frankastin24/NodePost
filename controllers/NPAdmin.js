@@ -16,10 +16,12 @@ const CustomPostType = require('../models/CustomPostType');
 const registerCPT = require('../np-includes/registerCPT');
 const deleteCPT = require('../np-includes/deleteCPT');
 const updateCPT = require('../np-includes/updateCPT');
+const updatePostMeta = require('../np-includes/updatePostMeta');
+const getPostMeta = require('../np-includes/getPostMeta');
 class NPAdmin {
 
     static noPrivAjax(request, context) {
-       
+
         if (global.__noPrivAjax && global.__noPrivAjax[request.action]) {
 
             global.__noPrivAjax[request.action](context, request);
@@ -172,6 +174,29 @@ class NPAdmin {
 
         })
 
+        addAjax('get_custom_fields', async (context, request) => {
+
+            
+            context.res.send('[]');
+
+        })
+
+        addAjax('update_post_meta', async (context, request) => {
+            
+            await updatePostMeta(request.postID,request.key,request.value);
+            
+            context.res.send('success');
+
+        })
+
+        addAjax('get_post_meta', async (context, request) => {
+            
+            const value = await getPostMeta(request.postID,request.key);
+            
+            context.res.send(value);
+
+        })
+
 
     }
 
@@ -232,31 +257,37 @@ class NPAdmin {
 
         if (request.param1 == 'create-post') {
 
-            if(request.param2 == 'page') {
+            if (request.param2 == 'page') {
 
-                 topMenu = 'Pages';
-                 const cpt = {
-                    title:'Page'
-                 }
+                topMenu = 'Pages';
+                const cpt = {
+                    title: 'Pages',
+                    singular : 'Page'
+                }
 
-            return view(admin_views_path + '/post-create', { basic_editor: true,cpt,  topMenu }, context);
+                return view(admin_views_path + '/post-create', { basic_editor: true, cpt, topMenu }, context);
 
 
             } else {
 
-                  const cpt = global.__cpts.find((obj) => {
-                return obj.slug == request.param2;
-            })
+                const cpts = await CustomPostType.findAll({
+                    where : {
+                        slug : request.param2
+                    }
+                })
+                
+                const cpt = cpts[0];
 
-            topMenu = cpt.title;
+                topMenu = cpt.title;
+                
 
-            cpt.title = cpt.title + ' '+ cpt.singular[0].toUpperCase() + cpt.singular.slice(1,cpt.singular.length);
+                cpt.title = cpt.title + ' ' + cpt.singular[0].toUpperCase() + cpt.singular.slice(1, cpt.singular.length);
 
-            return view(admin_views_path + '/post-create', { basic_editor: true, cpt: cpt, topMenu }, context);
+                return view(admin_views_path + '/post-create', { basic_editor: true, cpt: cpt, topMenu }, context);
 
 
             }
-          
+
         }
 
         if (request.param1 == 'cpt') {
@@ -271,13 +302,27 @@ class NPAdmin {
         if (request.param1 == 'edit') {
 
             const currentPost = await getPost(request.param2);
+            let cpt;
+            if(currentPost.post_type == 'page') {
+               cpt = {
+                title : 'Pages',
+                singular : 'page',
+                plural : 'pages'
+               }
+            } else {
+                cpt = await CustomPostType.findOne({
+                where : {
+                    slug : currentPost.post_type
+                }
+            })
+            }
             
-            topMenu = currentPost.post_type[0].toUpperCase() + currentPost.post_type.slice(1, currentPost.post_type.length);
-            topMenu = topMenu == 'Page' ? 'Pages' : topMenu;
             
+            topMenu = cpt.title;
+
             global.post = currentPost;
 
-            return view(admin_views_path + 'edit', { post: currentPost, topMenu }, context);
+            return view(admin_views_path + 'edit', { post: currentPost, topMenu,cpt }, context);
         }
 
         if (request.param1 == 'view-all') {
@@ -289,28 +334,30 @@ class NPAdmin {
                         [Op.ne]: 'new'
                     }
                 }
-
             })
-            topMenu = request.param2[0].toUpperCase() + request.param2.slice(1, request.param2.length);
-            topMenu = topMenu == 'Page' ? 'Pages' : topMenu;
+            
+          
             let cpt;
 
-            if(topMenu == 'Pages') {
+            if (request.param2 == 'page') {
                 cpt = {
-                    title : 'Pages',
-                    slug : 'page',
-                    singular : 'page',
-                    plural : 'pages'
+                    title: 'Pages',
+                    slug: 'page',
+                    singular: 'page',
+                    plural: 'pages'
                 }
-            }  else {
+            } else {
                 const foundCPT = await CustomPostType.findAll({
-                    where : {
+                    where: {
                         slug: request.param2
                     }
                 })
                 cpt = foundCPT[0];
             }
-            return view(admin_views_path + 'post-list', { posts, topMenu,cpt }, context);
+
+            topMenu = cpt.title;
+
+            return view(admin_views_path + 'post-list', { posts, topMenu, cpt }, context);
 
         }
 
