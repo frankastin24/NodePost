@@ -24,6 +24,8 @@
 
         </div>
 
+        <CustomFields v-if="displayCustomFields" />
+
         <ElementSelector />
 
         <FileBrowser />
@@ -32,7 +34,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted,ref } from 'vue';
 import EditorAside from './components/EditorAside/EditorAside.vue';
 import HTMLElements from './components/HTMLElements.vue';
 import DragContainer from './components/DragContainer.vue';
@@ -41,8 +43,10 @@ import FileBrowser from './components/FileBrowser/FileBrowser.vue';
 import { useAppStore } from './store/store';
 import FeaturedImage from './components/FeaturedImage.vue'
 import ElementSelector from './components/ElementSelector.vue';
+import CustomFields from './components/CustomFields.vue';
 let inputIsFocused = false;
 
+const displayCustomFields = ref(true);
 
 const store = useAppStore();
 
@@ -63,8 +67,10 @@ const selectRootContainer = () => {
 }
 
 onMounted(async () => {
+
     store.currentContainer = store.rootElement;
     store.containers.push(store.currentContainer);
+    
     const splitURL = window.location.href.split('/');
    
     if( splitURL[4] == 'edit' ) {
@@ -89,7 +95,7 @@ onMounted(async () => {
         store.containers = [store.rootElement];
         store.postType = post.post_type;
 
-        const cfResponse = await fetch('/np-admin/np-ajax/?action=get_custom_fields&post_type='+store.postType );
+        const cfResponse = await fetch('/np-admin/np-ajax/?action=get_custom_fields&postID='+store.postID+'&post_type='+store.postType );
 
         store.customFields = await cfResponse.json();
         
@@ -100,7 +106,7 @@ onMounted(async () => {
             }
         })
 
-        const dateTime = post.createdAt.substr(0,post.createdAt.length - 5).split('T');
+        const dateTime = `${}`;
         
         const date = dateTime[0].split('-');
         store.year = date[0];
@@ -121,11 +127,15 @@ onMounted(async () => {
        store.postID = await response.text();
        
 
-       const cfResponse = await fetch('/np-admin/np-ajax/?action=get_custom_fields&post_type='+store.postType );
+       const cfResponse = await fetch(`/np-admin/np-ajax/?action=get_custom_fields&post_type=${store.postType}&postID=${store.postID}` );
 
        store.customFields = await cfResponse.json();
        
        
+    }
+
+    if(store.postType == 'page') {
+        displayCustomFields.value = false;
     }
 })
 

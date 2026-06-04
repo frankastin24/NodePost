@@ -1,31 +1,27 @@
 <%- getHeader(false, viewContext) %>
 
-<div class="single-" style="background-image:url(<%= getFeaturedImage(post) %>)" id="single-portfolio-hero" >
-    <div class="overlay">
-        <div class="container">
-           <h3><%= post.title %></h3>
-           <div class="links flex">
-       
-       
-       <a href="" class="project_link"></a>
-      
-   </div>
+    <div class="single-" style="background-image:url(<%= getFeaturedImage(post) %>)" id="single-portfolio-hero">
+        <div class="overlay">
+            <div class="container">
+                <h3>
+                    <%= post.title %>
+                </h3>
+                <div class="links flex">
+                    <a href="" class="project_link"></a>
+                </div>
+            </div>
         </div>
+
     </div>
 
-</div>
+    <div class="container single-project-content">
 
-<div class="container single-project-content">
-  
-    <%- theContent(post) %>
+        <%- theContent(post) %>
 
-    <div class="navigation flex space-between">
-        <a href="/work"><< Back to portfolio</a>
+            <div class="navigation flex space-between">
+                <a href="/work">
+                    << Back to portfolio</a>
 
-        <%= previousPostLink('>> $title'); %>
+                <%- getPrevPostLink(post) %>
+            </div>
     </div>
-</div>
-
-<?php
-get_footer();
-?>

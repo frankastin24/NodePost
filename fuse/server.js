@@ -6,13 +6,22 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const serveStaticIfExists = require('./serveStatic')
 const app = express();
 
+//Set Port
+
 const port = (process.argv[2] ? process.argv[2] : 80 );
 
+//Setup Multer for file uploads
+
 const multer =  require('multer') ;
-const { get_option } = require('../np-includes/options');
 const upload = multer();
+
+//Setup urlencoded and json parsing
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+//Setup Sessions
+
 app.use(session({
   secret: 'your-secret-key',            // Change this to a strong secret for your app
   resave: false,                        // Don't save session if unmodified
@@ -23,7 +32,11 @@ app.use(session({
   }),            // Set to true if using HTTPS
 }));
 
+//Setup static file serving
+
 app.use(serveStaticIfExists(global.__app_path));
+
+//Limit multer upload to one action
 
 const multerMiddleWare = (req,res,next) => {
   if(req.query.action != 'upload_file') {
@@ -34,22 +47,9 @@ const multerMiddleWare = (req,res,next) => {
  
 }
 
+//Redirect all requests to router
+
 app.all('/{*any}', multerMiddleWare, async (req, res) => {
-  const NPAdmin = require('../controllers/NPAdmin');
-  const NPInstall = require('../controllers/NPInstall');
-
-  const activeTheme = await get_option('active_theme');
-
-  global.__active_theme = activeTheme;
-  
-  if(global.__env.INSTALL_COMPLETE == 'false') {
-
-    NPInstall.registerAJAX();
-
-  } else {
-      NPAdmin.ajax();
-  }
-
   const context = {
     req,
     res,
@@ -57,6 +57,8 @@ app.all('/{*any}', multerMiddleWare, async (req, res) => {
   
   router.execute(context);
 });
+
+//Start server
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

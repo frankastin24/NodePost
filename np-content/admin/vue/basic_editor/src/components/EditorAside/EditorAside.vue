@@ -108,6 +108,24 @@ const savePost = async () => {
         body : featuredFormData
     })
 
+    for (const field of store.customFields) {
+         console.log(field.value);
+        if(field.value != '') {
+
+            const fieldFormData = new FormData();
+
+            fieldFormData.append('postID', store.postID)
+            fieldFormData.append('key', field.title)
+            fieldFormData.append('value', field.value)
+
+            await fetch('/np-admin/np-ajax/?action=update_post_meta', {
+                method : 'post',
+                body : fieldFormData
+            });
+
+        }
+    }
+
 }
 const publishText = () => {
     if(store.postStatus == 'published') {

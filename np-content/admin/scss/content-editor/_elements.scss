@@ -27,6 +27,54 @@
     border:1px solid #000;
 }
 
+.custom-fields {
+        padding: 20px;
+    border: 1px solid #000;
+    margin-top: 20px;
+       width: calc(100% - 350px);
+       position: relative;
+       min-height: 260px;
+       .register-field {
+        position: absolute;
+        top:0;
+        left:0;
+        width:calc(100% - 40px);
+        height:260px;
+        padding:20px;
+        background:#FFF;
+        .close {
+            position: absolute;
+            right:5px;
+            top:5px;
+        }
+        label {
+            margin-bottom:10px;
+        }
+        select {
+            padding:10px;
+        }
+        .checkbox {
+            display:flex;
+            gap:10px;
+        }
+       }
+    h2 {
+        margin-bottom:20px;
+    }
+
+    .field {
+        h4 {
+            width:25%;
+            padding:10px 0px;
+        }
+        input {
+            width:60%;
+            padding:10px;
+        }
+        margin-bottom:10px;
+    }
+}
+
 .image {
     max-width: 100%;
 }

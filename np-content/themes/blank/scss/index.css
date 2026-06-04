@@ -197,7 +197,7 @@ footer p {
   height: 100%;
   position: absolute;
   background-size: cover;
-  background-position: center;
+  background-position: top;
   opacity: 0;
   transition: 3s opacity;
 }
@@ -239,44 +239,17 @@ footer p {
 #portfolio .portfolio-container > div {
   width: 60%;
 }
-#portfolio .portfolio-container > a:nth-child(2) {
-  max-width: calc(40% - 20px);
+#portfolio .portfolio-container > a:nth-child(4n+1) {
+  max-width: calc(60% - 25px);
 }
-#portfolio .portfolio-container > a:nth-child(3) {
-  max-width: calc(60% - 20px);
+#portfolio .portfolio-container > a:nth-child(4n+2) {
+  max-width: calc(40% - 25px);
 }
-#portfolio .portfolio-container > a:nth-child(4) {
-  max-width: calc(60% - 20px);
+#portfolio .portfolio-container > a:nth-child(4n+3) {
+  max-width: calc(40% - 25px);
 }
-#portfolio .portfolio-container > a:nth-child(5) {
-  max-width: calc(40% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(6) {
-  max-width: calc(40% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(7) {
-  max-width: calc(60% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(9) {
-  max-width: calc(60% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(10) {
-  max-width: calc(40% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(11) {
-  max-width: calc(60% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(13) {
-  max-width: calc(40% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(14) {
-  max-width: calc(60% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(15) {
-  max-width: calc(60% - 20px);
-}
-#portfolio .portfolio-container > a:nth-child(16) {
-  max-width: calc(40% - 20px);
+#portfolio .portfolio-container > a:nth-child(4n) {
+  max-width: calc(60% - 25px);
 }
 #portfolio .portfolio-container .portfolio-entry {
   border: 1px solid #dde6f5;

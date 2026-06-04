@@ -2,7 +2,6 @@ const { Sequelize } = require('sequelize');
 const doAction = require('../np-includes/doAction');
 
 
-
 const initializeDB = async () => {
   
   if(global.__env.FORCE_MYSQL == 'true' ||  global.__env.MODE == 'production') {
@@ -28,12 +27,10 @@ const initializeDB = async () => {
 
   global.npdb = sequelize;
 
-  doAction('db_initalized');
-
 }
-initializeDB();
 
 const testConnection = async () => {
+
   const sequelize = new Sequelize({
     dialect: 'mysql',
     host: global.__env.DB_HOSTNAME,
@@ -51,7 +48,5 @@ const testConnection = async () => {
   }
 }
 
-const changeDB = (db) => {
-   global.npdb = sequelize;
-}
+module.exports = {initializeDB , testConnection};
 

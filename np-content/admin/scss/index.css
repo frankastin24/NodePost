@@ -787,6 +787,53 @@ input {
   border: 1px solid #000;
 }
 
+.custom-fields {
+  padding: 20px;
+  border: 1px solid #000;
+  margin-top: 20px;
+  width: calc(100% - 350px);
+  position: relative;
+  min-height: 260px;
+}
+.custom-fields .register-field {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - 40px);
+  height: 260px;
+  padding: 20px;
+  background: #FFF;
+}
+.custom-fields .register-field .close {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.custom-fields .register-field label {
+  margin-bottom: 10px;
+}
+.custom-fields .register-field select {
+  padding: 10px;
+}
+.custom-fields .register-field .checkbox {
+  display: flex;
+  gap: 10px;
+}
+.custom-fields h2 {
+  margin-bottom: 20px;
+}
+.custom-fields .field {
+  margin-bottom: 10px;
+}
+.custom-fields .field h4 {
+  width: 25%;
+  padding: 10px 0px;
+}
+.custom-fields .field input {
+  width: 60%;
+  padding: 10px;
+}
+
 .image {
   max-width: 100%;
 }
@@ -961,4 +1008,54 @@ input {
   padding: 10px 20px;
   color: #FFF;
   border-radius: 5px;
+}
+
+.grid {
+  pointer-events: none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+
+.page-builder #menu {
+  position: relative;
+  height: 31px;
+  background-color: #2c3e50;
+  z-index: 10000;
+}
+.page-builder #menu .menu-item {
+  position: relative;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #FFF;
+}
+.page-builder #menu .menu-item .drop-down {
+  display: none;
+  position: absolute;
+  width: 200px;
+  background: #2c3e50;
+  padding: 10px;
+  margin-top: 10px;
+  margin-left: -10px;
+}
+.page-builder #menu .menu-item .drop-down li {
+  font-size: 13px;
+  padding: 6px 0px;
+  color: #FFF;
+}
+.page-builder #menu .menu-item .drop-down li .shortcut {
+  float: right;
+  color: #bdc3c7;
+  font-size: 10px;
+  padding-top: 1px;
+}
+.page-builder #menu .menu-item:hover .drop-down {
+  display: block;
+}
+.page-builder #menu .menu-item .drop-down li {
+  cursor: pointer;
 }/*# sourceMappingURL=index.css.map */

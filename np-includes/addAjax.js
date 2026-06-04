@@ -1,4 +1,4 @@
-const addAjax = (action, callback) => {
+module.exports = (action, callback) => {
 
     if(typeof global.__ajax == 'undefined') {
         global.__ajax = {};
@@ -10,4 +10,3 @@ const addAjax = (action, callback) => {
 
 
 
-module.exports = {addAjax}

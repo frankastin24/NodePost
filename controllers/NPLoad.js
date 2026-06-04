@@ -1,23 +1,11 @@
 const getThemePath = require("../np-includes/getThemePath");
 const fs = require('fs');
 const { get_option } = require("../np-includes/options");
-const registerTaxonomy = require('../np-includes/registerTax');
 const view = require('../fuse/view')
 const doAction = require('../np-includes/doAction');
 const CustomPostType = require('../models/CustomPostType');
 const Post = require('../models/Post');
 class NPLoad {
-
-    static registerCategories() {
-
-        registerTaxonomy({
-            slug: 'categories',
-            title: 'Categories',
-            cpts: ['all'],
-            termName: 'Category'
-        });
-
-    }
 
     static async init(request, context) {
 
@@ -30,19 +18,23 @@ class NPLoad {
         require(global.__app_path + themePath + 'functions');
 
         const siteTitle = await get_option('site_title');
-        const siteTagLine = await get_option('site_tagline');
+        const siteTagLine = await get_option('site_tag_line');
 
-        context.page_title = `${siteTitle} ${siteTagLine}`;
+        context.page_title = `${siteTitle} - ${siteTagLine}`;
 
         doAction('enqueue_scripts');
 
         if (context.req.path == '/') {
             /* Check for home template */
+            const front_page = await get_option('front_page');
 
+            // Check if a static front page is set
 
-            // if(fs.existsSync(themePath + 'page-' + front_page + '.ejs')) {
-            //     return view(themePath + 'page-'+front_page, {post : context.req.post},context);
-            // }
+            if (front_page) {
+                if(fs.existsSync(themePath + 'page-' + front_page + '.ejs')) {
+                 return view(themePath + 'page-'+front_page, {post : context.req.post},context);
+                }
+            }
 
             if (fs.existsSync(global.__app_path + themePath + 'home.ejs')) {
                 return view(themePath + 'home', { post: context.req.post }, context);
@@ -54,12 +46,9 @@ class NPLoad {
 
         } else {
 
-            //Check if post
-
-
             //Check if page 
 
-            const foundPages = await Post.findAll({
+            const post = await Post.findOne({
                 where : {
                     post_type : 'page',
                     slug : request.urlParam1,
@@ -67,34 +56,33 @@ class NPLoad {
                 }
             })
 
-            if(foundPages.length > 0) {
-                const post = foundPages[0];
+            if(post) {
+                context.page_title = `${siteTitle} - ${post.title}`;
                 return view(themePath + 'page', { post }, context);
             }
 
+            // Check if Custom Post Type Archive or Single Post
 
-            // Check if cpt
-
-            const foundCPTs = await CustomPostType.findAll({
+            const foundCPT = await CustomPostType.findOne({
                 where: {
                     slug: request.urlParam1
                 }
             })
 
-            if (foundCPTs.length > 0) {
+            if (foundCPT) {
 
                 if (request.urlParam2) {
 
-                    const posts = await Post.findAll({
+                    const post = await Post.findOne({
                         where:
                         {
                             slug: request.urlParam2
                         }
                     })
 
-                    if(posts) {
+                    if(post) {
 
-                        const post = posts[0];
+                        context.page_title = `${siteTitle} - ${post.title}`;
 
                         return view(themePath + 'single', { post }, context);
                     
@@ -114,20 +102,24 @@ class NPLoad {
 
                     });
 
+                    const cpt = await CustomPostType.findOne({
+                        where : {
+                            slug : request.urlParam1
+                        }
+                    })
+                    
+                    context.page_title = `${siteTitle} - ${cpt.title}`;
+
                     if(posts) {
                          return view(themePath + 'archive', { posts }, context);
                     }
 
-                  
-
                 }
-
-
-
 
             }
         }
-return view(themePath + '404', { }, context);
+        
+        return view(themePath + '404', { }, context);
 
     }
 }

@@ -1,6 +1,6 @@
 const {DataTypes} = require('sequelize');
 
-const PostMetaField = global.npdb.define('np_options', {
+const PostMetaField = global.npdb.define('np_post_meta_field', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -9,6 +9,8 @@ const PostMetaField = global.npdb.define('np_options', {
   cpt: DataTypes.INTEGER,
   title: DataTypes.STRING,
   type: DataTypes.STRING,
+  isolateToPost : DataTypes.BOOLEAN,
+  postToIsolate : DataTypes.INTEGER,
 });
 
 module.exports = PostMetaField;

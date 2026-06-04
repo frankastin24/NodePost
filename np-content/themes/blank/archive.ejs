@@ -6,10 +6,11 @@
 
         <div class="slides">
 
-
-            <div style="background-image:url()" class="slide">
+            <% for (post of posts) { %>
+            <div style="background-image:url(<%= getFeaturedImage(post) %>)" class="slide">
 
             </div>
+            <% } %>
 
 
         </div>
@@ -21,12 +22,35 @@
         </div>
     </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+
+    $(document).ready(function(){
+        let slides = $('.slides .slide');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            slides.removeClass('active');
+            slides.eq(index).addClass('active');
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % slides.length;
+            showSlide(currentIndex);
+        }
+
+        // Initial display
+        showSlide(currentIndex);
+
+        // Change slide every 5 seconds
+        setInterval(nextSlide, 7000);
+    });
+</script>
 
 
+    <div id="portfolio" class="container">
 
-    <div id="portfolio" class="container flex">
-
-        <div class="portfolio-container">
+        <div class="portfolio-container flex">
 
             <% for (post of posts) { %>
                 <a class="portfolio-entry" href="/work/<%= post.slug %>" style="background-image:url(<%= getFeaturedImage(post) %>)">
@@ -37,7 +61,19 @@
                         </h2>
 
                         <div class="skills flex">
-                            <span></span>
+
+                            <% 
+                            
+                            let string = await getPostMeta(post, 'Project Skills'); 
+
+                            console.log('skills string:', string);
+
+                            const skills = string.split(',').map(s => s.trim());
+                            
+                            %>
+                            <% for (skill of skills) { %>
+                                <span><%= skill %></span>
+                            <% } %>
                         </div>
                     </div>
                 </a>

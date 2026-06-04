@@ -1,23 +1,33 @@
 const admin_views_path = '/np-content/admin/';
+
 const view = require('../fuse/view');
-const updateEnvVariable = require('../fuse/enviromentals');
-const crypto = require('crypto')
-const createPost = require('../np-includes/createPost');
-const getPost = require('../np-includes/getPost');
-const updatePost = require('../np-includes/updatePost');
-const Post = require('../models/Post')
-const { addAjax } = require('../np-includes/addAjax');
+
+const Posts = require('../np-includes/Posts');
+
+const CustomPostTypes = require('../np-includes/CustomPostsTypes');
+
+const sendJSON = require('../np-includes/sendJSON');
+
+const addAjax = require('../np-includes/addAjax');
+const enqueue_admin_stylesheet = require('../np-includes/enqueue_admin_stylesheet');
+const enqueue_admin_script = require('../np-includes/enqueue_admin_script');
+
 const adminMenu = require('../np-includes/adminMenu');
 const loginUser = require('../np-includes/loginUser');
-const addNoPrivAjax = require('../np-includes/addNoPrivAjax');
-const fs = require('fs')
+
 const { Op } = require('sequelize');
-const CustomPostType = require('../models/CustomPostType');
-const registerCPT = require('../np-includes/registerCPT');
-const deleteCPT = require('../np-includes/deleteCPT');
-const updateCPT = require('../np-includes/updateCPT');
+
+const PostMeta = require('../models/PostMeta');
 const updatePostMeta = require('../np-includes/updatePostMeta');
 const getPostMeta = require('../np-includes/getPostMeta');
+
+const Template = require('../models/Template');
+
+const registerCustomField = require('../np-includes/registerCustomField');
+const getCustomFields = require('../np-includes/getCustomFields');
+
+const NPQuery = require('../np-includes/NPQUery');
+
 class NPAdmin {
 
     static noPrivAjax(request, context) {
@@ -34,16 +44,35 @@ class NPAdmin {
     }
 
     static registerAJAX() {
-        addAjax('get_post', async (context, request) => {
-            const post = await getPost(request.id);
+        addAjax('create_post', async (context, request) => {
 
-            context.res.send(JSON.stringify(post));
+            const newPost = await Posts.createPost({
+                title: '',
+                slug: '',
+                author: 0,
+                content: '',
+                post_type: request.post_type,
+                slug: '',
+                post_status: 'new'
+            })
+
+            context.res.send(newPost.id);
+
+        })
+
+        addAjax('add_cpt', async (context, request) => {
+            NPAdmin.addCPT(request, context);
+        })
+        addAjax('get_post', async (context, request) => {
+            const post = await Posts.getPost(request.id);
+
+            sendJSON(context, post);
         })
 
         addAjax('save_post', async (context, request) => {
             const post = JSON.parse(request.post);
 
-            await updatePost(post);
+            await Posts.updatePost(post);
 
             context.res.send('success');
         })
@@ -68,14 +97,12 @@ class NPAdmin {
 
             });
 
-            context.res.send(JSON.stringify({ files, folders }));
+            sendJSON(context, { files, folders });
+
         })
 
         addAjax('upload_file', (context, request) => {
             const req = context.req;
-            const res = context.res;
-
-
             const Busboy = require('busboy');
             const fs = require('fs');
             const path = require('path');
@@ -98,8 +125,6 @@ class NPAdmin {
 
                 let actualFilename = filename || fileInfo.filename || `img_${Date.now()}.jpg`;
 
-
-
                 const uploadDir = global.__app_path + folderPath;
 
                 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -113,16 +138,17 @@ class NPAdmin {
 
             busboy.on('finish', () => {
                 if (fileSaved) {
-                    res.send(JSON.stringify({
+                    sendJSON(context, {
                         success: true,
                         filePath: folderPath + (filename || ''),
 
-                    }));
+                    });
+
                 } else {
-                    res.status(500).send(JSON.stringify({
+                    sendJSON(context, {
                         success: false,
                         message: 'File not written'
-                    }));
+                    });
                 }
             });
 
@@ -144,23 +170,22 @@ class NPAdmin {
 
         addAjax('get_cpts', async (context) => {
 
-            const cpts = await CustomPostType.findAll();
-
-            context.res.send(JSON.stringify(cpts))
+            const cpts = await CustomPostTypes.getAll();
+            sendJSON(context, cpts);
 
         })
 
         addAjax('create_cpt', async (context, request) => {
 
             const cpt = JSON.parse(request.cpt);
-            await registerCPT(cpt);
+            await CustomPostTypes.register(cpt);
             context.res.send('success');
 
         })
 
         addAjax('delete_cpt', async (context, request) => {
 
-            await deleteCPT(request.id)
+            await CustomPostTypes.delete(request.id)
 
             context.res.send('success');
 
@@ -168,39 +193,129 @@ class NPAdmin {
 
         addAjax('update_cpt', async (context, request) => {
 
-            await updateCPT(JSON.parse(request.cpt))
+            await CustomPostTypes.updateCPT(JSON.parse(request.cpt))
 
             context.res.send('success');
 
         })
 
-        addAjax('get_custom_fields', async (context, request) => {
 
-            
-            context.res.send('[]');
-
-        })
 
         addAjax('update_post_meta', async (context, request) => {
-            
-            await updatePostMeta(request.postID,request.key,request.value);
-            
+
+            await updatePostMeta(request.postID, request.key, request.value);
+
             context.res.send('success');
 
         })
 
         addAjax('get_post_meta', async (context, request) => {
-            
-            const value = await getPostMeta(request.postID,request.key);
-            
+
+            const value = await getPostMeta(request.postID, request.key);
+
             context.res.send(value);
 
         })
 
+        addAjax('get_custom_fields', async (context, request) => {
+
+            if (request.cpt == 'page') return context.res.send([]);
+
+            const CustomPostType = require('../models/CustomPostType')
+
+            const cpt = await CustomPostType.findOne({
+                where: {
+                    slug: request.post_type
+                }
+            })
+
+
+            let fields = await getCustomFields(cpt.id);
+
+            let itts = 0;
+            for (const field of fields) {
+
+                const meta = await PostMeta.findOne({
+                    where: {
+                        postID: request.postID,
+                        key: field.title
+                    }
+                })
+
+                fields[itts].dataValues.value = meta ? meta.value : '';
+                itts++;
+            }
+
+
+            fields = fields ? fields : [];
+
+            context.res.send(JSON.stringify(fields));
+
+        })
+
+        addAjax('register_custom_field', async (context, request) => {
+
+            const field = JSON.parse(request.field);
+
+            const cpt = await CustomPostType.findOne({
+                where: {
+                    slug: field.cpt
+                }
+            })
+
+            field.cpt = cpt.id;
+
+            await registerCustomField(field);
+
+            context.res.send('success');
+
+        })
+
+        addAjax('get_templates', async (context, request) => {
+
+            const templates = await Template.findAll({
+                where: {
+                    post_type: request.post_type
+                }
+            })
+
+            context.res.send(JSON.stringify(templates));
+
+        })
+
+
+        addAjax('create-template', async (context, request) => {
+
+            const template = await Template.create({
+                name: request.name,
+                post_type: request.post_type,
+                content: '[]',
+
+            })
+
+            context.res.send(template.id);
+
+        })
+
+        addAjax('get_templates', async (context, request) => {
+
+            const templates = await Template.findAll({
+                where: {
+                    post_type: request.post_type
+                }
+            })
+
+            context.res.send(JSON.stringify(templates));
+
+        })  
 
     }
 
     static async login(request, context) {
+        enqueue_admin_stylesheet('Cormorant', 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap', []);
+        enqueue_admin_stylesheet('Roboto', 'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap', []);
+        enqueue_admin_stylesheet('admin-styles', '/np-content/admin/scss/index.css', []);
+
         if (global.__env.INSTALL_COMPLETE == 'false') {
             return context.res.redirect(`/${global.__env.ADMIN_URL}/install`);
         }
@@ -227,6 +342,15 @@ class NPAdmin {
         if (!context.req.session.userID || typeof context.req.session.userID == 'undefined') {
             return context.res.redirect(`/login`);
         }
+
+
+        enqueue_admin_stylesheet('Cormorant', 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap', []);
+        enqueue_admin_stylesheet('Roboto', 'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap', []);
+        enqueue_admin_stylesheet('admin-styles', '/np-content/admin/scss/index.css', []);
+        enqueue_admin_script('jquery', 'https://code.jquery.com/jquery-3.7.1.min.js', [], false);
+        enqueue_admin_script('admin-script', '/np-content/admin/js/script.js', ['jquery'], true);
+        enqueue_admin_script('basic-editor', '/np-content/admin/vue/basic_editor/dist/dist.js', ['jquery'], true);
+
 
         NPAdmin.registerAJAX()
 
@@ -255,6 +379,39 @@ class NPAdmin {
 
         let topMenu = '';
 
+        if (request.param1 == 'edit-template') {
+            
+            return view(admin_views_path + 'template', {  }, context);
+
+        }
+
+        if (request.param1 == 'templates') {
+
+            let cpt;
+
+            if(request.param2 == 'page') {
+                cpt = {
+                    title: 'Pages',
+                    singular: 'Page'
+                }
+            } else {
+
+                cpt = await CustomPostType.findOne({
+                    where: {
+                        slug: request.param2
+                    }
+            })
+
+            }
+            
+            
+
+            topMenu = cpt.title;
+
+            return view(admin_views_path + 'templates', { basic_editor: true, cpt, topMenu }, context);
+
+        }
+
         if (request.param1 == 'create-post') {
 
             if (request.param2 == 'page') {
@@ -262,7 +419,7 @@ class NPAdmin {
                 topMenu = 'Pages';
                 const cpt = {
                     title: 'Pages',
-                    singular : 'Page'
+                    singular: 'Page'
                 }
 
                 return view(admin_views_path + '/post-create', { basic_editor: true, cpt, topMenu }, context);
@@ -271,15 +428,15 @@ class NPAdmin {
             } else {
 
                 const cpts = await CustomPostType.findAll({
-                    where : {
-                        slug : request.param2
+                    where: {
+                        slug: request.param2
                     }
                 })
-                
+
                 const cpt = cpts[0];
 
                 topMenu = cpt.title;
-                
+
 
                 cpt.title = cpt.title + ' ' + cpt.singular[0].toUpperCase() + cpt.singular.slice(1, cpt.singular.length);
 
@@ -301,42 +458,42 @@ class NPAdmin {
 
         if (request.param1 == 'edit') {
 
-            const currentPost = await getPost(request.param2);
+            const currentPost = await Posts.getPost(request.param2);
             let cpt;
-            if(currentPost.post_type == 'page') {
-               cpt = {
-                title : 'Pages',
-                singular : 'page',
-                plural : 'pages'
-               }
+            if (currentPost.post_type == 'page') {
+                cpt = {
+                    title: 'Pages',
+                    singular: 'page',
+                    plural: 'pages'
+                }
             } else {
                 cpt = await CustomPostType.findOne({
-                where : {
-                    slug : currentPost.post_type
-                }
-            })
+                    where: {
+                        slug: currentPost.post_type
+                    }
+                })
             }
-            
-            
+
+
             topMenu = cpt.title;
 
             global.post = currentPost;
 
-            return view(admin_views_path + 'edit', { post: currentPost, topMenu,cpt }, context);
+            return view(admin_views_path + 'edit', { post: currentPost, topMenu, cpt }, context);
         }
 
         if (request.param1 == 'view-all') {
 
-            const posts = await Post.findAll({
-                where: {
-                    post_type: request.param2,
-                    post_status: {
-                        [Op.ne]: 'new'
-                    }
-                }
-            })
-            
-          
+            const offset = request.param3 || 0;
+
+            const query = new NPQuery({
+                post_type: request.param2,
+                post_status: { [Op.ne]: 'new' },
+                offset
+            });
+
+            const posts = await query.getPosts();
+
             let cpt;
 
             if (request.param2 == 'page') {
@@ -490,25 +647,7 @@ class NPAdmin {
 
     static async ajax(request, context) {
 
-        addAjax('create_post', async (context, request) => {
 
-            const newPost = await createPost({
-                title: '',
-                slug: '',
-                author: 0,
-                content: '',
-                post_type: request.post_type,
-                slug: '',
-                post_status: 'new'
-            })
-
-            context.res.send(newPost.id);
-
-        })
-
-        addAjax('add_cpt', async (context, request) => {
-            NPAdmin.addCPT(request, context);
-        })
 
     }
 
